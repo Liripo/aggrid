@@ -6,7 +6,7 @@
 \alias{renderAggrid}
 \title{Shiny bindings for aggrid}
 \usage{
-aggridOutput(outputId, width = "100\%", height = "400px")
+aggridOutput(outputId, width = "100\%", height = "500px")
 
 renderAggrid(expr, env = parent.frame(), quoted = FALSE)
 }

@@ -10,15 +10,22 @@ aggrid(
   defaultColDef = NULL,
   sortable = TRUE,
   filter = TRUE,
-  resizable = FALSE,
+  resizable = TRUE,
   suppressRowClickSelection = FALSE,
   rowSelection = c("multiple", "single"),
+  rowMultiSelectWithClick = FALSE,
   checkboxSelection = FALSE,
   pagination = FALSE,
   paginationPageSize = 10,
   domLayout = NULL,
+  sideBar = FALSE,
+  enableRangeSelection = TRUE,
+  statusBar = TRUE,
   ...,
   theme = "ag-theme-balham",
+  community = FALSE,
+  use_cdn = FALSE,
+  server = FALSE,
   width = NULL,
   height = NULL,
   elementId = NULL
@@ -47,9 +54,21 @@ aggrid(
 
 \item{domLayout}{please see \url{https://www.ag-grid.com/javascript-data-grid/grid-size/#dom-layout}}
 
+\item{sideBar}{Include sidebar.}
+
+\item{enableRangeSelection}{Enable Cells range select?}
+
+\item{statusBar}{statusBar}
+
 \item{...}{For more options, please see \url{https://www.ag-grid.com/javascript-data-grid/grid-options}}
 
-\item{theme}{theme, please see \url{https://www.ag-grid.com/example/?theme=ag-theme-alpine}}
+\item{theme}{Specify theme. Default is \code{ag-theme-balham}. please see \url{https://www.ag-grid.com/example/?theme=ag-theme-alpine}}
+
+\item{community}{Enable to use community?}
+
+\item{use_cdn}{Depends resource to use cdn?}
+
+\item{server}{server model}
 
 \item{width, height}{Width/Height in pixels (optional, defaults to automatic sizing)}
 
@@ -63,4 +82,7 @@ aggrid(iris)
 
 ## use theme
 aggrid(iris,theme = "ag-theme-alpine")
+
+## auto size columns
+aggrid(iris) |> auto_size_columns()
 }

@@ -14,3 +14,8 @@ auto_size_columns(x, skipHeader = FALSE)
 \description{
 Resize all column by columns content
 }
+\examples{
+
+aggrid(iris) |>
+  auto_size_columns()
+}

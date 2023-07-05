@@ -7,3 +7,4 @@ _\.new\.png$
 ^doc$
 ^Meta$
 ^\.github$
+^LICENSE\.md$
