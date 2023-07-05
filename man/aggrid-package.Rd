@@ -4,9 +4,9 @@
 \name{aggrid-package}
 \alias{aggrid}
 \alias{aggrid-package}
-\title{aggrid: What the Package Does (One Line, Title Case)}
+\title{aggrid: Html widget interface the ag-grid library}
 \description{
-What the package does (one paragraph).
+Html widgets table.
 }
 \seealso{
 Useful links:
@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Liripo (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
 }
 \keyword{internal}
