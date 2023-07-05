@@ -2,7 +2,7 @@ Package: aggrid
 Title: Html widget interface the ag-grid library
 Version: 0.0.0.9000
 Authors@R: 
-    person("Liripo" , "liripo@qq.com", role = c("aut", "cre"),
+    person("Liripo" ,"","liripo@qq.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Html widgets table.
 License: GPL (>= 3)
