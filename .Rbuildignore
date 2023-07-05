@@ -1,3 +1,8 @@
 ^aggrid\.Rproj$
 ^\.Rproj\.user$
 _\.new\.png$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^doc$
+^Meta$

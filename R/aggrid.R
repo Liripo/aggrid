@@ -13,10 +13,13 @@
 #' @param paginationPageSize default size is `10`.
 #' @param domLayout please see <https://www.ag-grid.com/javascript-data-grid/grid-size/#dom-layout>
 #' @param sideBar Include sidebar.
+#' @param enableRangeSelection Enable Cells range select?
 #' @param statusBar
 #' @param ... For more options, please see <https://www.ag-grid.com/javascript-data-grid/grid-options>
-#' @param theme theme, please see <https://www.ag-grid.com/example/?theme=ag-theme-alpine>
-#' @param Community Enable to use Community?
+#' @param theme Specify theme. Default is `ag-theme-balham`. please see <https://www.ag-grid.com/example/?theme=ag-theme-alpine>
+#' @param community Enable to use community?
+#' @param server server model
+#' @param use_cdn Depends resource to use cdn?
 #' @param width,height Width/Height in pixels (optional, defaults to automatic sizing)
 #' @param elementId An id for the widget (a random string by default).
 #'
@@ -38,18 +41,22 @@ aggrid <- function(data,
   defaultColDef = NULL,
   sortable = TRUE,
   filter = TRUE,
-  resizable = FALSE,
+  resizable = TRUE,
   suppressRowClickSelection = FALSE,
   rowSelection = c('multiple','single'),
+  rowMultiSelectWithClick = FALSE,
   checkboxSelection = FALSE,
   pagination = FALSE,
   paginationPageSize = 10,
   domLayout = NULL,
   sideBar = FALSE,
+  enableRangeSelection = TRUE,
   statusBar = TRUE,
   ...,
   theme = "ag-theme-balham",
-  Community = FALSE,
+  community = FALSE,
+  use_cdn = FALSE,
+  server = FALSE,
   width = NULL,
   height = NULL,
   elementId = NULL) {
@@ -62,10 +69,13 @@ aggrid <- function(data,
   rowSelection <- match.arg(rowSelection)
 
   column_defs <- purrr::imap(data,function(x,i) {
-    list(field = i)
+    list(field = i,
+         filter = to_aggrid_filter(class(x)),
+         filterParams = list(maxNumConditions = 5)
+    )
   })
 
-  if (isFALSE(suppressRowClickSelection) && isTRUE(checkboxSelection)) {
+  if (isTRUE(checkboxSelection)) {
     column_defs[[1]] <- c(
       column_defs[[1]],
       list(checkboxSelection = TRUE,headerCheckboxSelection = rowSelection == "multiple")
@@ -96,35 +106,61 @@ aggrid <- function(data,
     statusBar <- list(
       statusPanels = list(
         list(statusPanel = 'agTotalAndFilteredRowCountComponent',align = 'left'),
-        list(statusPanel = 'agTotalRowCountComponent', align = 'center'),
-        list(statusPanel = 'agFilteredRowCountComponent'),
-        list(statusPanel = 'agSelectedRowCountComponent'),
-        list(statusPanel = 'agAggregationComponent')
+        list(statusPanel = 'agTotalRowCountComponent'),
+        list(statusPanel = 'agFilteredRowCountComponent',align = 'center'),
+        list(statusPanel = 'agSelectedRowCountComponent',align = 'center'),
+        list(statusPanel = 'agAggregationComponent',align = 'center')
       )
     )
   } else if (isFALSE(statusBar)) {
     statusBar <- NULL
   }
-  deps <- aggrid_dependency(use_cdn = FALSE,Community = Community)
+  deps <- aggrid_dependency(use_cdn,community)
+  if (server) {
+    session <- shiny::getDefaultReactiveDomain()
+    outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
+    filterFunc <- function(data, req) {
+      params <- rawToChar(req$rook.input$read()) |>
+        jsonlite::fromJSON()
+      slice_data <- data[params$startRow:params$endRow,]
+
+      shiny::httpResponse(
+        status = 200L,
+        content_type = "application/json",
+        content = jsonlite::toJSON(
+          list(rowData = slice_data, nrow = nrow(data))
+        )
+      )
+    }
+    dataURL <- session$registerDataObj(
+      outputId,
+      data = data,
+      filterFunc
+    )
+    data = NULL
+  } else {
+    dataURL <- NULL
+  }
 
 
-  # toJSON should not has names
-  names(column_defs) <- NULL
   x <- list(
     gridOptions = list(
       columnDefs = column_defs,
       suppressRowClickSelection = suppressRowClickSelection,
       rowSelection = rowSelection,
+      enableRangeSelection = enableRangeSelection,
       rowMultiSelectWithClick = TRUE,
       pagination = pagination,
       domLayout = domLayout,
       statusBar = statusBar,
       paginationPageSize = paginationPageSize,
       defaultColDef = default_coldef,
-      suppressFieldDotNotation = TRUE,
-      rowData = data
+      suppressFieldDotNotation = TRUE
     ),
-    theme = theme
+    theme = theme,
+    data = data,
+    server = server,
+    dataURL = dataURL
   )
 
   dot_list <- list(...)
@@ -143,7 +179,10 @@ aggrid <- function(data,
     elementId = elementId,
     dependencies = deps,
     sizingPolicy = htmlwidgets::sizingPolicy(
-      defaultWidth = "100%"
+      defaultWidth = "100%",
+      knitr.defaultWidth = "100%",
+      knitr.defaultHeight = 500,
+      knitr.figure = FALSE
     )
   )
 }
@@ -165,7 +204,7 @@ aggrid <- function(data,
 #' @name aggrid-shiny
 #'
 #' @export
-aggridOutput <- function(outputId, width = '100%', height = '400px'){
+aggridOutput <- function(outputId, width = '100%', height = '500px'){
   htmlwidgets::shinyWidgetOutput(outputId, 'aggrid', width, height, package = 'aggrid')
 }
 

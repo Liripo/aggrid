@@ -1,3 +1,9 @@
+#------------------------------------------------------------------------------#
+#
+#  This file is define aggrid utils function.
+#
+#------------------------------------------------------------------------------#
+
 #' Resize all column by container width
 #'
 #' Example from <https://www.ag-grid.com/javascript-data-grid/column-sizing/#resizing-example>
@@ -34,3 +40,21 @@ auto_size_columns <- function(x,skipHeader = FALSE) {
   ', tolower(skipHeader)))
   x
 }
+
+#' add aggrid header
+#'
+#' @inheritParams size_to_fit
+#' @importFrom tidyselect eval_select
+#' @export
+
+ag_header <- function(x, header,columns) {
+  loc <- tidyselect::eval_select(rlang::enquo(columns), data = x$x$data)
+  x
+}
+
+# ag_coldef <- function(x,columns = dplyr::everything(),...) {
+#   loc <- tidyselect::eval_select(rlang::enquo(columns), data = x$x$data)
+#   for (i in names(loc)) {
+#
+#   }
+# }

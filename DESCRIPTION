@@ -16,4 +16,7 @@ Imports:
     purrr,
     utils
 Suggests: 
+    knitr,
+    rmarkdown,
     shinytest2
+VignetteBuilder: knitr

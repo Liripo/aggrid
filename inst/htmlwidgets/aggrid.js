@@ -21,14 +21,44 @@ HTMLWidgets.widget({
 
       renderValue: function(x) {
 
+        // columnDefs dict to assay; R Object has names will covert to dict
+        x.gridOptions.columnDefs = Object.values(x.gridOptions.columnDefs);
+
         gridOptions = x.gridOptions;
+
         // Whether to allow users to override？
         if (HTMLWidgets.shinyMode) {
           gridOptions.onSelectionChanged = onSelectionChanged;
         }
         console.log(gridOptions);
+        if (x.server) {
+          gridOptions.rowModelType = 'serverSide';
+          gridOptions.maxBlocksInCache = 10;
+        } else {
+          gridOptions.rowData = x.data;
+        }
         el.classList.add(x.theme || "ag-theme-balham");
         new agGrid.Grid(el, gridOptions);
+        if (x.server) {
+          const datasource = {
+            // get rows data
+            getRows(params) {
+              params.request.startRow += 1;
+              fetch(x.dataURL,{
+                method: 'post',
+                body: JSON.stringify(params.request),
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                params.successCallback(data.rowData, data.nrow);
+              });
+            }
+          };
+          // register datasource with the grid
+          gridOptions.api.setServerSideDatasource(datasource);
+        }
       },
 
       resize: function(width, height) {
