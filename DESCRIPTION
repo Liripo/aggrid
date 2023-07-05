@@ -13,10 +13,13 @@ RoxygenNote: 7.2.3
 Imports: 
     htmltools,
     htmlwidgets,
+    jsonlite,
     purrr,
+    rlang,
     utils
 Suggests: 
     knitr,
     rmarkdown,
     shinytest2
 VignetteBuilder: knitr
+URL: https://liripo.github.io/aggrid/

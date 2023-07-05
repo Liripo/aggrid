@@ -14,7 +14,7 @@
 #' @param domLayout please see <https://www.ag-grid.com/javascript-data-grid/grid-size/#dom-layout>
 #' @param sideBar Include sidebar.
 #' @param enableRangeSelection Enable Cells range select?
-#' @param statusBar
+#' @param statusBar statusBar
 #' @param ... For more options, please see <https://www.ag-grid.com/javascript-data-grid/grid-options>
 #' @param theme Specify theme. Default is `ag-theme-balham`. please see <https://www.ag-grid.com/example/?theme=ag-theme-alpine>
 #' @param community Enable to use community?
@@ -24,6 +24,7 @@
 #' @param elementId An id for the widget (a random string by default).
 #'
 #' @import htmlwidgets
+#' @import jsonlite
 #' @importFrom purrr imap
 #' @importFrom utils modifyList
 #'
@@ -122,6 +123,10 @@ aggrid <- function(data,
     filterFunc <- function(data, req) {
       params <- rawToChar(req$rook.input$read()) |>
         jsonlite::fromJSON()
+      if(!rlang::is_empty(params$sortModel)){
+        ## 排序
+        # data <- dplyr::arrange()
+      }
       slice_data <- data[params$startRow:params$endRow,]
 
       shiny::httpResponse(
