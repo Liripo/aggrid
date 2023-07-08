@@ -152,7 +152,7 @@ data.frame(
   Area = c(1000,200,40)
 ) |> 
   aggrid() |> 
-  ag_col_def(valueFormatter = JS('
+  ag_col_def(valueFormatter = htmlwidgets::JS('
     (params) => {return params.value + " mi\u00b2";};
   '))
 ```

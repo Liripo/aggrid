@@ -6,6 +6,7 @@
   }
 }
 
+
 dropNulls <- function(lst) {
   base::Filter(Negate(is.null), lst)
 }
