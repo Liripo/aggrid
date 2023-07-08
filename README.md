@@ -63,3 +63,4 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+<a href="https://liripo.github.io/aggrid/articles/Intro.html"><img src="https://github.com/Liripo/aggrid/assets/54770415/97464c66-0e35-46a5-b4b2-025a323be0ad" alt="pCcGSsg.png" border="0" /></a>
