@@ -41,3 +41,17 @@ aggrid_dependency <- function(use_cdn = FALSE, community = TRUE) {
   }
   dep
 }
+
+#' aggrid format Dependencies use Numeral-js
+#'
+#' @export
+
+Numeral_dependency <- function() {
+  htmltools::htmlDependency(
+    name = "Numeral",
+    version = "2.0.6",
+    src = c(file = "htmlwidgets/lib"),
+    script = "numeral.min.js",
+    package = "aggrid"
+  )
+}

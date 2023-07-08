@@ -2,12 +2,10 @@
 % Please edit documentation in R/ag_utils.R
 \name{ag_gridOptions}
 \alias{ag_gridOptions}
-\title{Set aggrid gridOptions
-More options see \url{https://www.ag-grid.com/javascript-data-grid/grid-options/}}
+\title{Set aggrid gridOptions}
 \usage{
 ag_gridOptions(x, ...)
 }
 \description{
-Set aggrid gridOptions
 More options see \url{https://www.ag-grid.com/javascript-data-grid/grid-options/}
 }

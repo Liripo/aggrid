@@ -10,19 +10,21 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
+    cli,
     dplyr,
     glue,
     htmltools,
     htmlwidgets,
     jsonlite,
     purrr,
-    rlang,
+    rlang (>= 0.4.11),
     tibble,
     tidyselect,
     utils
 Suggests: 
     knitr,
     rmarkdown,
+    roxygen2,
     shinytest2
 Depends:
     R (>= 4.1.0)

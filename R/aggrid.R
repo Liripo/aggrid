@@ -176,12 +176,14 @@ aggrid <- function(data,
       alwaysMultiSort = TRUE,
       statusBar = statusBar,
       paginationPageSize = paginationPageSize,
-      defaultColDef = list(sortable = TRUE,
-                           resizable = TRUE,
-                           # for side bar
-                           enableRowGroup = TRUE,
-                           enableValue = TRUE,
-                           enablePivot = TRUE),
+      defaultColDef = list(
+        sortable = TRUE,
+        resizable = TRUE,
+        # for side bar
+        enableRowGroup = TRUE,
+        enableValue = TRUE,
+        enablePivot = TRUE
+      ),
       suppressFieldDotNotation = TRUE
     ),
     theme = theme,
@@ -225,7 +227,7 @@ preRender_aggrid <- function(x) {
   }
   # group support
   if (!is.null(x$x$group)) {
-    cols <- lapply(x$x$group, function(group)group$children) |>
+    cols <- lapply(x$x$group, function(group) group$children) |>
       unlist()
     dup_cols <- cols[duplicated(cols)]
     if (length(dup_cols) > 0) {
@@ -238,7 +240,7 @@ preRender_aggrid <- function(x) {
       group
     })
     x$x$gridOptions$columnDefs[cols] <- NULL
-    x$x$gridOptions$columnDefs <- c(group_columnDefs,x$x$gridOptions$columnDefs)
+    x$x$gridOptions$columnDefs <- c(group_columnDefs, x$x$gridOptions$columnDefs)
   }
   names(x$x$gridOptions$columnDefs) <- NULL
   return(x)

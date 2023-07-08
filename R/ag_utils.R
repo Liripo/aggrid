@@ -197,7 +197,7 @@ ag_col_header <- function(x,
 #' @inherit ag_col_def
 #' @seealso [ag_col_def()]
 #' @export
-ag_col_defs <- function(x,columns = NULL, ...) {
+ag_col_defs <- function(x, columns = NULL, ...) {
   check_aggrid(x)
   columns <- tidyselect::eval_select(rlang::enquo(columns), data = x$x$data) |>
     names()
@@ -211,12 +211,12 @@ ag_col_defs <- function(x,columns = NULL, ...) {
   if (nrow(args_tbl) != n_col) {
     cli::cli_abort("`ag_col_defs` all parameters length must is {n_col}.")
   }
-  purrr::iwalk(args_tbl,function(x,name) {
+  purrr::iwalk(args_tbl, function(x, name) {
     if (is.list(x) && !is.null(names(x))) {
       cli::cli_abort("{name} should not named list.")
     }
   })
-  columnDefs <- purrr::pmap(args_tbl,function(...) {
+  columnDefs <- purrr::pmap(args_tbl, function(...) {
     list(...)
   })
   names(columnDefs) <- columns
@@ -447,7 +447,7 @@ ag_col_group <- function(x,
     headerGroupComponentParams = headerGroupComponentParams
   )
   args <- dropNulls(args)
-  x$x$group[[headerName]] <- c(list(children = columns),args)
+  x$x$group[[headerName]] <- c(list(children = columns), args)
   x
 }
 
@@ -459,14 +459,60 @@ ag_col_group <- function(x,
 #-------------------------------------------------------------------------------
 
 #' Set aggrid gridOptions
+#'
 #' More options see <https://www.ag-grid.com/javascript-data-grid/grid-options/>
 #' @export
-ag_gridOptions <- function(x,...) {
+ag_gridOptions <- function(x, ...) {
   check_aggrid(x)
   args <- list(...)
   x$x$gridOptions <- modifyList(
     x$x$gridOptions,
     args
+  )
+  x
+}
+
+
+#-------------------------------------------------------------------------------
+#
+# Set aggrid Columns format
+#
+#-------------------------------------------------------------------------------
+
+#' Set aggrid Columns format
+#'
+#' @inheritParams ag_col_def
+#' @param format use [numeraljs](http://numeraljs.com/#custom-formats) format
+#' @examples
+#' data.frame(
+#'   price = c(9603.01, 100, 98322),
+#'   percent = c(0.9525556, 0.5, 0.112),
+#'   exponential = c(123456789,0.0001314,0.52),
+#'   bytes = c(1024^3,1024^2,1024)
+#' ) |>
+#'   aggrid() |>
+#'   ag_col_format(price,"$0,0.000") |>
+#'   ag_col_format(percent,"0.0%") |>
+#'   ag_col_format(exponential,"0,0e+0") |>
+#'   ag_col_format(bytes,"0 b")
+#'
+#' # custom valueFormatter
+#' data.frame(
+#'   Area = c(1000,200,40)
+#' ) |>
+#'   aggrid() |>
+#'   ag_col_def(valueFormatter = JS('
+#'     (params) => {return params.value + " mi\u00b2";};
+#'   '))
+#' @export
+ag_col_format <- function(x,columns,format) {
+  dep <- Numeral_dependency()
+  x$dependencies <- unique(append(x$dependencies, list(dep)))
+  valueFormatter <- JS(paste0(
+    '(params) => {return numeral(params.value).format("%s");};',format)
+  )
+  x <- ag_col_def(x,{{columns}},
+                  valueFormatter = valueFormatter
   )
   x
 }

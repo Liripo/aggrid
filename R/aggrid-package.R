@@ -3,7 +3,7 @@
 
 ## usethis namespace: start
 #' @import htmlwidgets
-#' @import rlang
+#' @importFrom cli cli_abort
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise
@@ -15,7 +15,6 @@
 #' @importFrom purrr map
 #' @importFrom purrr pmap
 #' @importFrom purrr transpose
-#' @importFrom rlang call2
 #' @importFrom rlang is_empty
 #' @importFrom tibble as_tibble
 #' @importFrom tidyselect eval_select

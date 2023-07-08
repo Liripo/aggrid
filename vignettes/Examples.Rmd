@@ -127,6 +127,36 @@ aggrid(iris) |>
   ag_col_def(cellStyle = list(textAlign = "center"),headerClass = 'ag-header-center')
 ```
 
+### Columns: format
+
+`ag_col_format()` use [numeraljs](http://numeraljs.com/) to format number.
+
+```{r}
+data.frame(
+    price = c(9603.01, 100, 98322),
+    percent = c(0.9525556, 0.5, 0.112),
+    exponential = c(123456789,0.0001314,0.52),
+    bytes = c(1024^3,1024^2,1024)
+) |> 
+  aggrid() |> 
+  ag_col_format(price,"$0,0.000") |> 
+  ag_col_format(percent,"0.0%") |> 
+  ag_col_format(exponential,"0,0e+0") |> 
+  ag_col_format(bytes,"0 b")
+```
+
+Custom columns format use `valueFormatter`:
+
+```{r}
+data.frame(
+  Area = c(1000,200,40)
+) |> 
+  aggrid() |> 
+  ag_col_def(valueFormatter = JS('
+    (params) => {return params.value + " mi\u00b2";};
+  '))
+```
+
 ## Row group
 
 ```{r}
