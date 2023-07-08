@@ -10,6 +10,9 @@
     <loc>https://liripo.github.io/aggrid/articles/Examples.html</loc>
   </url>
   <url>
+    <loc>https://liripo.github.io/aggrid/articles/Intro.html</loc>
+  </url>
+  <url>
     <loc>https://liripo.github.io/aggrid/articles/index.html</loc>
   </url>
   <url>
@@ -19,7 +22,43 @@
     <loc>https://liripo.github.io/aggrid/index.html</loc>
   </url>
   <url>
-    <loc>https://liripo.github.io/aggrid/reference/ag_header.html</loc>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_def.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_defs.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_filter.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_group.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_header.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_pinned.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_sort.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_span.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_tooltip.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_width.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_gridOptions.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_size_columns.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_size_fit.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/aggrid-package.html</loc>
@@ -34,16 +73,13 @@
     <loc>https://liripo.github.io/aggrid/reference/aggrid_dependency.html</loc>
   </url>
   <url>
-    <loc>https://liripo.github.io/aggrid/reference/auto_size_columns.html</loc>
+    <loc>https://liripo.github.io/aggrid/reference/filter_to_expr.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/index.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/is.aggrid.html</loc>
-  </url>
-  <url>
-    <loc>https://liripo.github.io/aggrid/reference/size_to_fit.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/to_aggrid_filter.html</loc>

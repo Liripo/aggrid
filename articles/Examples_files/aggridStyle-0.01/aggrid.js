@@ -10,11 +10,27 @@ HTMLWidgets.widget({
 
     // TODO: define shared variables for this instance
     let gridOptions = {};
-    var onSelectionChanged = function(event) {
+    const onSelectionChanged = function(event) {
+      // should use data id
       id = el.id + "_" + "rows_selected"
       let row_index = event.api.getSelectedNodes();
-      row_index = row_index.map((item) => item.rowIndex + 1);
+      row_index = row_index.map((item) => item.data.rowid);
       Shiny.setInputValue(id, value = row_index);
+    };
+    const getRowId = function(params) {
+      // TO DO: group unique id
+      // https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/#supplying-unique-group-ids
+      const rowGroupCols = params.columnApi.getRowGroupColumns();
+      if (rowGroupCols.length == 0) {
+        return params.data.rowid;
+      }
+      const thisGroupCol = rowGroupCols[params.level];
+      var Id = params.data[thisGroupCol.getColDef().field];
+
+      if (params.data.rowid != undefined) {
+        Id + params.data.rowid;
+      }
+      return Id;
     };
 
     return {
@@ -22,7 +38,7 @@ HTMLWidgets.widget({
       renderValue: function(x) {
 
         // columnDefs dict to assay; R Object has names will covert to dict
-        x.gridOptions.columnDefs = Object.values(x.gridOptions.columnDefs);
+        // x.gridOptions.columnDefs = x.gridOptions.columnDefs;
 
         gridOptions = x.gridOptions;
 
@@ -30,20 +46,24 @@ HTMLWidgets.widget({
         if (HTMLWidgets.shinyMode) {
           gridOptions.onSelectionChanged = onSelectionChanged;
         }
-        console.log(gridOptions);
+        // console.log(gridOptions);
         if (x.server) {
           gridOptions.rowModelType = 'serverSide';
           gridOptions.maxBlocksInCache = 10;
+          gridOptions.getRowId = getRowId;
         } else {
           gridOptions.rowData = x.data;
         }
         el.classList.add(x.theme || "ag-theme-balham");
         new agGrid.Grid(el, gridOptions);
         if (x.server) {
+          // add Total rows
+          const statbar_el = el.querySelector(".ag-status-bar-right .ag-status-name-value");
+          statbar_el.classList.remove("ag-hidden");
+          statbar_el.children[1].innerText = x.n_row;
           const datasource = {
             // get rows data
             getRows(params) {
-              params.request.startRow += 1;
               fetch(x.dataURL,{
                 method: 'post',
                 body: JSON.stringify(params.request),
@@ -51,8 +71,10 @@ HTMLWidgets.widget({
               })
               .then(response => response.json())
               .then(data => {
-                console.log(data);
-                params.successCallback(data.rowData, data.nrow);
+                const statbar_el = el.querySelector(".ag-status-bar-left .ag-status-name-value");
+                statbar_el.children[0].innerText = "Rows:";
+                statbar_el.children[1].innerText = data.lastRow;
+                params.successCallback(data.rowData, data.lastRow);
               });
             }
           };
