@@ -6,19 +6,19 @@ navbar:
   structure:
     left: [examples, articles, reference]
     right: [search,github]
-  components:
-    examples:
-      text: Examples
-      href: articles/Examples.html
-    reference:
-      - title: Create tables
-        contents:
-           - aggrid
-      - title: Column Definitions
-        contents:
-           - ag_col_def
-           - ag_col_defs
-           - ag_col_width
-           - ag_col_header
-           - ag_col_filter
-           - ag_col_pinned
+
+examples:
+  - text: Examples
+    href: articles/Examples.html
+# reference:
+#   - title: Create tables
+#     contents:
+#        - aggrid
+#   - title: Column Definitions
+#     contents:
+#        - ag_col_def
+#        - ag_col_defs
+#        - ag_col_width
+#        - ag_col_header
+#        - ag_col_filter
+#        - ag_col_pinned
