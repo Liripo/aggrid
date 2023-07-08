@@ -11,7 +11,8 @@ Html widgets table.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://liripo.github.io/aggrid/}
+  \item \url{https://liripo.github.io/aggrid/,https://github.com/Liripo/aggrid}
+  \item Report bugs at \url{https://github.com/Liripo/aggrid/issues}
 }
 
 }

@@ -1,6 +1,6 @@
 Package: aggrid
 Title: Html widget interface the ag-grid library
-Version: 0.0.0.9000
+Version: 0.1.0.9000
 Authors@R: 
     person(" ","Liripo",,"liripo@qq.com",role = c("aut", "cre"),
            comment = c(ORCID = "0009-0007-6069-1375"))
@@ -27,4 +27,5 @@ Suggests:
 Depends:
     R (>= 4.1.0)
 VignetteBuilder: knitr
-URL: https://liripo.github.io/aggrid/
+URL: https://liripo.github.io/aggrid/,https://github.com/Liripo/aggrid
+BugReports: https://github.com/Liripo/aggrid/issues

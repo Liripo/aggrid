@@ -1,5 +1,5 @@
 ---
-title: "Intro to use aggrid"
+title: "Intro"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Intro}
