@@ -25,6 +25,9 @@
     <loc>https://liripo.github.io/aggrid/index.html</loc>
   </url>
   <url>
+    <loc>https://liripo.github.io/aggrid/reference/Numeral_dependency.html</loc>
+  </url>
+  <url>
     <loc>https://liripo.github.io/aggrid/reference/ag_col_def.html</loc>
   </url>
   <url>
@@ -32,6 +35,9 @@
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/ag_col_filter.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_format.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/ag_col_group.html</loc>
@@ -83,6 +89,9 @@
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/is.aggrid.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/tidyeval.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/to_aggrid_filter.html</loc>

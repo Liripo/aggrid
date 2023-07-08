@@ -1,5 +1,4 @@
 (function() {
-
 HTMLWidgets.widget({
 
   name: 'aggrid',
