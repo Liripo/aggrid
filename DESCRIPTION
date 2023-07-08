@@ -3,23 +3,28 @@ Title: Html widget interface the ag-grid library
 Version: 0.0.0.9000
 Authors@R: 
     person(" ","Liripo",,"liripo@qq.com",role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0009-0007-6069-1375"))
 Description: Html widgets table.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
+    dplyr,
+    glue,
     htmltools,
     htmlwidgets,
     jsonlite,
     purrr,
     rlang,
+    tibble,
     tidyselect,
     utils
 Suggests: 
     knitr,
     rmarkdown,
     shinytest2
+Depends:
+    R (>= 4.1.0)
 VignetteBuilder: knitr
 URL: https://liripo.github.io/aggrid/

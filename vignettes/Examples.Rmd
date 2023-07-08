@@ -1,10 +1,10 @@
 ---
 title: "Examples"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Examples}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
 ---
 
 ```{r, include = FALSE}
@@ -15,49 +15,156 @@ knitr::opts_chunk$set(
 ```
 
 ## Basic Usage
+
+To create aggrid table, use `aggrid()` on a data frame or matrix.
+
 ```{r setup}
 library(aggrid)
 aggrid(iris)
 ```
 
-### pagination
+## Column Properties
+
+### Columns: Width
+
+For column width adjustment, you can use `ag_col_def()` or `ag_col_width()`.
+
 ```{r}
-aggrid(iris,pagination = TRUE)
+aggrid(iris) |> 
+  ag_col_def(columns = c(Sepal.Length,Sepal.Width),width = 80)
 ```
-
-### select rows with checkbox
 
 ```{r}
-aggrid(iris,checkboxSelection = TRUE)
+aggrid(iris) |> 
+  ag_col_width(c(Sepal.Length,Sepal.Width),width = 80)
 ```
 
-## Server
+#### Size Columns to Fit
 
-For big data, e.g. millions of rows,you should use `server` model.
-
-```{r,eval=FALSE}
-purrr::map_dfr(seq_len(10000), ~iris) |> 
-    aggrid()
+If you don't want a particular column to be included in the auto resize, you can use `size_to_fit()`. For example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
+```{r}
+iris |> 
+  dplyr::relocate(Species) |> 
+  aggrid() |> 
+  ag_col_width(Species,width = 400) |> 
+  ag_size_fit()
 ```
 
-Although the above code can be used to render within 5~6s, operations such as sorting become slowly.`server` model only work in shiny.
+#### Auto-Size Columns
 
-```{r,eval=FALSE}
-library(shiny)
+Auto width to fit the contents of the cells in the column.
 
-ui <- fluidPage(
-  aggridOutput("test")
-)
+```{r}
+aggrid(iris) |> 
+  ag_size_columns()
+```
 
-server <- function(input, output, session) {
-  output$test <- renderAggrid({
-    purrr::map_dfr(seq_len(10000), ~iris) |> 
-      aggrid(server = T)
-  })
-  observe({
-    print(input$test_rows_selected)
-  })
-}
+More options please see <https://www.ag-grid.com/javascript-data-grid/column-properties>.
 
-shinyApp(ui, server)
+### Columns: filter
+
+`aggrid()` default set columns filter, and automatically identify the data type to select filter mode. If you want to change the default behavior, please use `ag_col_filter()`. 
+```{r}
+aggrid(iris) |> 
+  ag_col_filter(Sepal.Length,filter = FALSE) |> 
+  ag_col_filter(Species,filter = "agTextColumnFilter")
+```
+
+More options please see <https://www.ag-grid.com/javascript-data-grid/filter-text/>.
+
+### Columns: pinned
+
+```{r}
+aggrid(iris) |> 
+  ag_col_pinned(Species,pinned = "left")
+```
+
+### Columns: Header
+
+By default, `aggrid()` will remove colnames dots, use `ag_col_header()` can custom colnames.
+
+```{r}
+aggrid(iris) |> 
+  ag_col_header(Sepal.Length,headerName = c("Sepal.Length")) |> 
+  ag_col_header(Sepal.Width,headerName = c("Sepal.Width"))
+```
+
+The above code is bad, you can use `ag_col_defs()` for vectorization.
+
+```{r}
+aggrid(iris) |> 
+  ag_col_defs(columns = everything(),headerName = names(iris))
+```
+
+[`menuTabs`](ag-grid.com/javascript-data-grid/column-properties/#reference-header-menuTabs) parameter default is `c('filterMenuTab','generalMenuTab','columnsMenuTab')`, 
+If you only want to filter menuTab, you can:
+
+```{r}
+aggrid(iris) |> 
+  ag_col_def(columns = Species,menuTabs = list('filterMenuTab'))
+```
+
+### Columns: group
+
+```{r}
+aggrid(iris) |> 
+  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal")
+```
+
+Center header:
+```{r}
+aggrid(iris) |> 
+  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal",headerClass = "ag-header-center") |> 
+  ag_col_group(columns = starts_with("Petal"),headerName = "Petal",headerClass = "ag-header-center")
+```
+
+Set all content content center:
+
+```{r}
+aggrid(iris) |> 
+  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal",headerClass = "ag-header-center") |> 
+  ag_col_group(columns = starts_with("Petal"),headerName = "Petal",headerClass = "ag-header-center") |> 
+  ag_col_def(cellStyle = list(textAlign = "center"),headerClass = 'ag-header-center')
+```
+
+## Row group
+
+```{r}
+aggrid(iris) |> 
+  ag_col_def(Species,rowGroup = T)
+```
+
+## Accessories
+
+### statusBar
+
+Default has statusBar, you can set it `FALSE` use `ag_gridOptions()`:
+```{r}
+aggrid(iris) |> 
+  ag_gridOptions(statusBar = FALSE)
+```
+
+### Side Bar
+
+```{r}
+aggrid(iris) |> 
+  ag_gridOptions(sideBar = TRUE)
+```
+
+Custom Side bar:
+
+```{r}
+aggrid(iris) |> 
+  ag_gridOptions(sideBar = list(
+    toolPanels = list(
+      list(
+        id = 'columns',
+        labelDefault = 'Columns',
+        labelKey = 'columns',
+        iconKey = 'columns',
+        toolPanel = 'agColumnsToolPanel'
+      )
+    )
+  ))
+
 ```

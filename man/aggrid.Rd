@@ -6,21 +6,11 @@
 \usage{
 aggrid(
   data,
-  columnDefs = NULL,
-  defaultColDef = NULL,
-  sortable = TRUE,
-  filter = TRUE,
-  resizable = TRUE,
-  suppressRowClickSelection = FALSE,
-  rowSelection = c("multiple", "single"),
-  rowMultiSelectWithClick = FALSE,
+  rowSelection = c("multiple", "single", "none"),
   checkboxSelection = FALSE,
   pagination = FALSE,
   paginationPageSize = 10,
   domLayout = NULL,
-  sideBar = FALSE,
-  enableRangeSelection = TRUE,
-  statusBar = TRUE,
   ...,
   theme = "ag-theme-balham",
   community = FALSE,
@@ -32,33 +22,15 @@ aggrid(
 )
 }
 \arguments{
-\item{data}{dataframe}
+\item{data}{data frame or matrix.}
 
-\item{columnDefs}{custom every column}
-
-\item{defaultColDef}{custom default column}
-
-\item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
-
-\item{filter}{Enable column filtering? Defaults to \code{TRUE}.}
-
-\item{resizable}{Enable column resizable?}
-
-\item{suppressRowClickSelection}{Enable to suppress column select?}
+\item{rowSelection}{three options：\code{multiple},\code{single},\code{none}.}
 
 \item{checkboxSelection}{Enable checkbox in first column?}
 
 \item{pagination}{Enable pagination allows?}
 
 \item{paginationPageSize}{default size is \code{10}.}
-
-\item{domLayout}{please see \url{https://www.ag-grid.com/javascript-data-grid/grid-size/#dom-layout}}
-
-\item{sideBar}{Include sidebar.}
-
-\item{enableRangeSelection}{Enable Cells range select?}
-
-\item{statusBar}{statusBar}
 
 \item{...}{For more options, please see \url{https://www.ag-grid.com/javascript-data-grid/grid-options}}
 
@@ -75,13 +47,13 @@ aggrid(
 \item{elementId}{An id for the widget (a random string by default).}
 }
 \description{
-This function creates a HTML widget to display matrix or a dataframe using ag-grid.
+This function creates a HTML widget to display matrix or a data frame using ag-grid.
 }
 \examples{
 aggrid(iris)
 
 ## use theme
-aggrid(iris,theme = "ag-theme-alpine")
+aggrid(iris, theme = "ag-theme-alpine")
 
 ## auto size columns
 aggrid(iris) |> auto_size_columns()

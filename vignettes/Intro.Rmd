@@ -1,0 +1,63 @@
+---
+title: "Intro to use aggrid"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Basic Usage
+```{r setup}
+library(aggrid)
+aggrid(iris)
+```
+
+### pagination
+```{r}
+aggrid(iris,pagination = TRUE)
+```
+
+### select rows with checkbox
+
+```{r}
+aggrid(iris,checkboxSelection = TRUE)
+```
+
+## Server
+
+For big data, e.g. millions of rows,you should use `server` model.
+
+```{r,eval=FALSE}
+purrr::map_dfr(seq_len(10000), ~iris) |> 
+    aggrid()
+```
+
+Although the above code can be used to render within 5~6s, operations such as sorting become slowly.`server` model only work in shiny.
+
+```{r,eval=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  aggridOutput("test")
+)
+
+server <- function(input, output, session) {
+  output$test <- renderAggrid({
+    purrr::map_dfr(seq_len(10000), ~iris) |> 
+      aggrid(server = T)
+  })
+  observe({
+    print(input$test_rows_selected)
+  })
+}
+
+shinyApp(ui, server)
+```

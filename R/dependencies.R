@@ -8,15 +8,15 @@ aggrid_dependency <- function(use_cdn = FALSE, community = TRUE) {
     if (community) {
       dep <- htmltools::htmlDependency(
         name = "aggrid",
-        version = "30.0.2",
+        version = "30.0.3",
         src = c(href = "https://cdn.jsdelivr.net/npm/ag-grid-community/dist/"),
         script = "ag-grid-community.min.js"
       )
     } else {
       dep <- htmltools::htmlDependency(
         name = "aggrid",
-        version = "30.0.2",
-        src = c(href = "https://cdn.jsdelivr.net/npm/ag-grid-enterprise@30.0.2/dist/"),
+        version = "30.0.3",
+        src = c(href = "https://cdn.jsdelivr.net/npm/ag-grid-enterprise@30.0.3/dist/"),
         script = "ag-grid-enterprise.min.js"
       )
     }
@@ -24,7 +24,7 @@ aggrid_dependency <- function(use_cdn = FALSE, community = TRUE) {
     if (community) {
       dep <- htmltools::htmlDependency(
         name = "aggrid",
-        version = "30.0.2",
+        version = "30.0.3",
         src = c(file = "htmlwidgets/lib"),
         script = "ag-grid-community.min.js",
         package = "aggrid"
@@ -32,7 +32,7 @@ aggrid_dependency <- function(use_cdn = FALSE, community = TRUE) {
     } else {
       dep <- htmltools::htmlDependency(
         name = "aggrid",
-        version = "30.0.2",
+        version = "30.0.3",
         src = c(file = "htmlwidgets/lib"),
         script = "ag-grid-enterprise.min.js",
         package = "aggrid"

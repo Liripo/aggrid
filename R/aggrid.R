@@ -1,20 +1,11 @@
 #' Create a HTML widget using the ag-grid library
 #'
-#' This function creates a HTML widget to display matrix or a dataframe using ag-grid.
-#' @param data dataframe
-#' @param columnDefs custom every column
-#' @param defaultColDef custom default column
-#' @param sortable Enable sorting? Defaults to `TRUE`.
-#' @param filter Enable column filtering? Defaults to `TRUE`.
-#' @param resizable Enable column resizable?
-#' @param suppressRowClickSelection Enable to suppress column select?
+#' This function creates a HTML widget to display matrix or a data frame using ag-grid.
+#' @param data data frame or matrix.
+#' @param rowSelection three options：`multiple`,`single`,`none`.
 #' @param checkboxSelection Enable checkbox in first column?
 #' @param pagination Enable pagination allows?
 #' @param paginationPageSize default size is `10`.
-#' @param domLayout please see <https://www.ag-grid.com/javascript-data-grid/grid-size/#dom-layout>
-#' @param sideBar Include sidebar.
-#' @param enableRangeSelection Enable Cells range select?
-#' @param statusBar statusBar
 #' @param ... For more options, please see <https://www.ag-grid.com/javascript-data-grid/grid-options>
 #' @param theme Specify theme. Default is `ag-theme-balham`. please see <https://www.ag-grid.com/example/?theme=ag-theme-alpine>
 #' @param community Enable to use community?
@@ -23,8 +14,6 @@
 #' @param width,height Width/Height in pixels (optional, defaults to automatic sizing)
 #' @param elementId An id for the widget (a random string by default).
 #'
-#' @import htmlwidgets
-#' @import jsonlite
 #' @importFrom purrr imap
 #' @importFrom utils modifyList
 #'
@@ -32,108 +21,135 @@
 #' aggrid(iris)
 #'
 #' ## use theme
-#' aggrid(iris,theme = "ag-theme-alpine")
+#' aggrid(iris, theme = "ag-theme-alpine")
 #'
 #' ## auto size columns
 #' aggrid(iris) |> auto_size_columns()
 #' @export
 aggrid <- function(data,
-  columnDefs = NULL,
-  defaultColDef = NULL,
-  sortable = TRUE,
-  filter = TRUE,
-  resizable = TRUE,
-  suppressRowClickSelection = FALSE,
-  rowSelection = c('multiple','single'),
-  rowMultiSelectWithClick = FALSE,
-  checkboxSelection = FALSE,
-  pagination = FALSE,
-  paginationPageSize = 10,
-  domLayout = NULL,
-  sideBar = FALSE,
-  enableRangeSelection = TRUE,
-  statusBar = TRUE,
-  ...,
-  theme = "ag-theme-balham",
-  community = FALSE,
-  use_cdn = FALSE,
-  server = FALSE,
-  width = NULL,
-  height = NULL,
-  elementId = NULL) {
+                   rowSelection = c("multiple", "single", "none"),
+                   checkboxSelection = FALSE,
+                   pagination = FALSE,
+                   paginationPageSize = 10,
+                   domLayout = NULL,
+                   ...,
+                   theme = "ag-theme-balham",
+                   community = FALSE,
+                   use_cdn = FALSE,
+                   server = FALSE,
+                   width = NULL,
+                   height = NULL,
+                   elementId = NULL) {
 
   # --------------- para check
   if (is.matrix(data)) {
     data <- as.data.frame(data)
   }
   stopifnot(is.data.frame(data))
+  # data <- data.table::as.data.table(data)
   rowSelection <- match.arg(rowSelection)
+  suppressRowClickSelection <- if (rowSelection == "none") TRUE else FALSE
+  n_row <- nrow(data)
 
-  column_defs <- purrr::imap(data,function(x,i) {
-    list(field = i,
-         filter = to_aggrid_filter(class(x)),
-         filterParams = list(maxNumConditions = 5)
+  # need to make row id
+  # https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/#providing-row-ids
+  # Need to include row numbers in data to be able to return correctly when row is selected in shiny
+  if ("rowid" %in% colnames(data)) {
+    stop("Temporary column name cannot have `rowid`.")
+  }
+  data$rowid <- seq_len(n_row)
+
+  column_defs <- purrr::imap(data, function(x, i) {
+    filterParams <- list(maxNumConditions = 5)
+    if (is.factor(x) && isTRUE(server)) {
+      filterParams$values <- levels(x)
+    }
+    if (inherits(x, "Date")) {
+      filterParams$comparator <- date_comparator()
+    }
+    list(
+      field = i,
+      filter = to_aggrid_filter(class(x)),
+      filterParams = filterParams,
+      hide = i == "rowid",
+      suppressColumnsToolPanel = i == "rowid"
     )
   })
 
   if (isTRUE(checkboxSelection)) {
     column_defs[[1]] <- c(
       column_defs[[1]],
-      list(checkboxSelection = TRUE,headerCheckboxSelection = rowSelection == "multiple")
+      list(checkboxSelection = TRUE, headerCheckboxSelection = rowSelection == "multiple")
     )
   }
 
-  if (!is.null(columnDefs)) {
-    column_defs <- modifyList(
-      column_defs,
-      columnDefs
-    )
+  domLayout <- if (pagination || nrow(data) <= 15) {
+    "autoHeight"
+  } else {
+    NULL
   }
 
-  if (is.null(domLayout)) {
-    domLayout <- if (pagination || nrow(data) <= 10) {
-      "autoHeight"
-    } else NULL
-  }
-  default_coldef <- list(sortable = sortable,filter = filter,resizable = resizable)
-  if (!is.null(defaultColDef)) {
-    default_coldef <- modifyList(
-      default_coldef,defaultColDef
-    )
-  }
 
-  #
-  if (isTRUE(statusBar)) {
-    statusBar <- list(
-      statusPanels = list(
-        list(statusPanel = 'agTotalAndFilteredRowCountComponent',align = 'left'),
-        list(statusPanel = 'agTotalRowCountComponent'),
-        list(statusPanel = 'agFilteredRowCountComponent',align = 'center'),
-        list(statusPanel = 'agSelectedRowCountComponent',align = 'center'),
-        list(statusPanel = 'agAggregationComponent',align = 'center')
-      )
+  statusBar <- list(
+    statusPanels = list(
+      list(statusPanel = "agTotalAndFilteredRowCountComponent", align = "left"),
+      list(statusPanel = "agTotalRowCountComponent"),
+      list(statusPanel = "agFilteredRowCountComponent", align = "center"),
+      list(statusPanel = "agSelectedRowCountComponent", align = "center"),
+      list(statusPanel = "agAggregationComponent", align = "center")
     )
-  } else if (isFALSE(statusBar)) {
-    statusBar <- NULL
-  }
-  deps <- aggrid_dependency(use_cdn,community)
+  )
+
+  deps <- aggrid_dependency(use_cdn, community)
   if (server) {
     session <- shiny::getDefaultReactiveDomain()
     outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
     filterFunc <- function(data, req) {
       params <- rawToChar(req$rook.input$read()) |>
         jsonlite::fromJSON()
-      if(!rlang::is_empty(params$sortModel)){
+      if (!rlang::is_empty(params$sortModel)) {
         ## 排序
-        # data <- dplyr::arrange()
+        sortModel <- params$sortModel
+        order_index <- do.call(
+          function(...) {
+            order(..., decreasing = sortModel$sort == "desc")
+          },
+          lapply(sortModel$colId, function(col) {
+            data[[col]]
+          })
+        )
+
+        data <- data[order_index, ]
       }
-      slice_data <- data[params$startRow:params$endRow,]
+      # 过滤
+      if (!rlang::is_empty(params$filterModel)) {
+        for (i in seq_along(params$filterModel)) {
+          colum_name <- names(params$filterModel)[i]
+          filterModel <- params$filterModel[[i]]
+          filter_expr <- rlang::parse_expr(filter_to_expr(colum_name, filterModel))
+          print(filter_expr)
+          data <- data |>
+            dplyr::filter(!!filter_expr)
+        }
+      }
+      if (!rlang::is_empty(params$rowGroupCols)) {
+        cli::cli_abort("Server model don't support.Welcome to contribute.")
+        # data <- data |>
+        #   dplyr::group_by(Species) |>
+        #   dplyr::summarise()
+      }
+
+      slice_data <- data |>
+        dplyr::slice((params$startRow + 1):params$endRow)
 
       shiny::httpResponse(
         status = 200L,
         content_type = "application/json",
         content = jsonlite::toJSON(
-          list(rowData = slice_data, nrow = nrow(data))
+          list(
+            rowData = slice_data,
+            lastRow = nrow(data)
+          )
         )
       )
     }
@@ -142,7 +158,6 @@ aggrid <- function(data,
       data = data,
       filterFunc
     )
-    data = NULL
   } else {
     dataURL <- NULL
   }
@@ -153,34 +168,42 @@ aggrid <- function(data,
       columnDefs = column_defs,
       suppressRowClickSelection = suppressRowClickSelection,
       rowSelection = rowSelection,
-      enableRangeSelection = enableRangeSelection,
+      enableRangeSelection = TRUE,
       rowMultiSelectWithClick = TRUE,
       pagination = pagination,
       domLayout = domLayout,
+      # It seems better to let users click ctrl and mouse?
+      alwaysMultiSort = TRUE,
       statusBar = statusBar,
       paginationPageSize = paginationPageSize,
-      defaultColDef = default_coldef,
+      defaultColDef = list(sortable = TRUE,
+                           resizable = TRUE,
+                           # for side bar
+                           enableRowGroup = TRUE,
+                           enableValue = TRUE,
+                           enablePivot = TRUE),
       suppressFieldDotNotation = TRUE
     ),
     theme = theme,
     data = data,
     server = server,
-    dataURL = dataURL
+    dataURL = dataURL,
+    n_row = n_row
   )
 
   dot_list <- list(...)
-  x$gridOptions <- c(x$gridOptions,dot_list)
+  x$gridOptions <- c(x$gridOptions, dot_list)
 
   # Refer to the aggrid tutorial, the data needs to be converted by row.
-  attr(x, 'TOJSON_ARGS') <- list(dataframe = "rows")
+  attr(x, "TOJSON_ARGS") <- list(dataframe = "rows")
 
   # create widget
   htmlwidgets::createWidget(
-    name = 'aggrid',
+    name = "aggrid",
     x,
     width = width,
     height = height,
-    package = 'aggrid',
+    package = "aggrid",
     elementId = elementId,
     dependencies = deps,
     sizingPolicy = htmlwidgets::sizingPolicy(
@@ -188,8 +211,37 @@ aggrid <- function(data,
       knitr.defaultWidth = "100%",
       knitr.defaultHeight = 500,
       knitr.figure = FALSE
-    )
+    ),
+    preRenderHook = preRender_aggrid
   )
+}
+
+# preRenderHook function
+# more please see <https://book.javascript-for-r.com/widgets-adv.html#>
+preRender_aggrid <- function(x) {
+  # when shiny serve, don't send data to javascript
+  if (x$x$server) {
+    x$x$data <- NULL
+  }
+  # group support
+  if (!is.null(x$x$group)) {
+    cols <- lapply(x$x$group, function(group)group$children) |>
+      unlist()
+    dup_cols <- cols[duplicated(cols)]
+    if (length(dup_cols) > 0) {
+      cli::cli_abort("{dup_cols} columns has duplicate headerName.Currently not supported.IF you want to multi headerName, please see <https://www.ag-grid.com/javascript-data-grid/column-groups/#advanced-grouping-example>. And modify `aggird` Object.")
+    }
+    group_columnDefs <- lapply(x$x$group, function(group) {
+      group_children <- x$x$gridOptions$columnDefs[group$children]
+      names(group_children) <- NULL
+      group$children <- group_children
+      group
+    })
+    x$x$gridOptions$columnDefs[cols] <- NULL
+    x$x$gridOptions$columnDefs <- c(group_columnDefs,x$x$gridOptions$columnDefs)
+  }
+  names(x$x$gridOptions$columnDefs) <- NULL
+  return(x)
 }
 
 #' Shiny bindings for aggrid
@@ -209,13 +261,15 @@ aggrid <- function(data,
 #' @name aggrid-shiny
 #'
 #' @export
-aggridOutput <- function(outputId, width = '100%', height = '500px'){
-  htmlwidgets::shinyWidgetOutput(outputId, 'aggrid', width, height, package = 'aggrid')
+aggridOutput <- function(outputId, width = "100%", height = "500px") {
+  htmlwidgets::shinyWidgetOutput(outputId, "aggrid", width, height, package = "aggrid")
 }
 
 #' @rdname aggrid-shiny
 #' @export
 renderAggrid <- function(expr, env = parent.frame(), quoted = FALSE) {
-  if (!quoted) { expr <- substitute(expr) } # force quoted
+  if (!quoted) {
+    expr <- substitute(expr)
+  } # force quoted
   htmlwidgets::shinyRenderWidget(expr, aggridOutput, env, quoted = TRUE)
 }
