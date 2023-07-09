@@ -280,6 +280,80 @@ ag_col_pinned <- function(x,
   )
 }
 
+#-------------------------------------------------------------------------------
+#
+# Set aggrid Columns cellRender
+#
+#-------------------------------------------------------------------------------
+
+
+# sparkline data type not number
+# So need convert
+convertToNumberArray <- function() {
+  jscode <- 'function convertToNumberArray(params) {
+    const field = params.colDef.field;
+    var value = params.data[field];
+    if (typeof value === "number") {
+      return [value];
+    }
+    return value;
+  }'
+}
+
+#' Columns cell Render
+#' @param cellStyle An object of css values / or function returning an object of css values for a particular cell. More details
+#' @param cellClass Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. More details
+#' @param cellClassRules Rules which can be applied to include certain CSS classes. More details
+#' @param cellRenderer Provide your own cell Renderer component for this column's cells.See: Cell Renderer
+#' @param cellRendererParams Params to be passed to the cellRenderer component.
+#' @param cellRendererSelector Callback to select which cell renderer to be used for a given row within the same column. More details
+#' @param autoHeight Set to true to have the grid calculate the height of a row based on contents of this column.
+#' @param wrapText Set to true to have the text wrap inside the cell - typically used with autoHeight.
+#' @param enableCellChangeFlash Set to true to flash a cell when it's refreshed.
+#' @param suppressCellFlash Set to true to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.
+#' @export
+ag_col_render <- function(x,
+                          columns = NULL,
+                          cellStyle = NULL,
+                          cellClass = NULL,
+                          cellClassRules = NULL,
+                          cellRenderer = NULL,
+                          cellRendererParams = NULL,
+                          cellRendererSelector = NULL,
+                          autoHeight = NULL,
+                          wrapText = NULL,
+                          enableCellChangeFlash = NULL,
+                          suppressCellFlash = NULL) {
+  spark_value_gatter <- NULL
+  if (is.character(cellRenderer) &&
+      cellRenderer == "agSparklineCellRenderer") {
+    if (!is.null(cellRendererParams$sparklineOptions$type) &&
+        cellRendererParams$sparklineOptions$type == "bar") {
+      cli::cli_warn("By default htmlwidgets set auto_unbox = TRUE so the 1 length atomic elements are not send as array. So default set `valueGetter` to convert Number to Array.")
+      spark_value_gatter <- JS(convertToNumberArray())
+      # if (is.null(cellRendererParams$sparklineOptions$valueAxisDomain)) {
+      #   data <- x$x$data %>% pull({{ columns }})
+      #   cellRendererParams$sparklineOptions$valueAxisDomain <- range(data)
+      # }
+    }
+  }
+
+  ag_col_def(x,
+    {{ columns }},
+    cellStyle = cellStyle,
+    cellClass = cellClass,
+    cellClassRules = cellClassRules,
+    cellRenderer = cellRenderer,
+    cellRendererParams = cellRendererParams,
+    cellRendererSelector = cellRendererSelector,
+    autoHeight = autoHeight,
+    wrapText = wrapText,
+    enableCellChangeFlash = enableCellChangeFlash,
+    suppressCellFlash = suppressCellFlash,
+    valueGetter = spark_value_gatter
+  )
+}
+
 #' Custom columns sort
 #' @inheritParams ag_col_def
 #' @param sortable Set to true to allow sorting on this column.
@@ -487,32 +561,72 @@ ag_gridOptions <- function(x, ...) {
 #' data.frame(
 #'   price = c(9603.01, 100, 98322),
 #'   percent = c(0.9525556, 0.5, 0.112),
-#'   exponential = c(123456789,0.0001314,0.52),
-#'   bytes = c(1024^3,1024^2,1024)
+#'   exponential = c(123456789, 0.0001314, 0.52),
+#'   bytes = c(1024^3, 1024^2, 1024)
 #' ) |>
 #'   aggrid() |>
-#'   ag_col_format(price,"$0,0.000") |>
-#'   ag_col_format(percent,"0.0%") |>
-#'   ag_col_format(exponential,"0,0e+0") |>
-#'   ag_col_format(bytes,"0 b")
+#'   ag_col_format(price, "$0,0.000") |>
+#'   ag_col_format(percent, "0.0%") |>
+#'   ag_col_format(exponential, "0,0e+0") |>
+#'   ag_col_format(bytes, "0 b")
 #'
 #' # custom valueFormatter
 #' data.frame(
-#'   Area = c(1000,200,40)
+#'   Area = c(1000, 200, 40)
 #' ) |>
 #'   aggrid() |>
 #'   ag_col_def(valueFormatter = JS('
 #'     (params) => {return params.value + " mi\u00b2";};
 #'   '))
 #' @export
-ag_col_format <- function(x,columns,format) {
+ag_col_format <- function(x, columns, format) {
   dep <- Numeral_dependency()
   x$dependencies <- unique(append(x$dependencies, list(dep)))
-  valueFormatter <- JS(paste0(
-    '(params) => {return numeral(params.value).format("%s");};',format)
+  valueFormatter <- JS(sprintf(
+    '(params) => {return numeral(params.value).format("%s");};', format
+  ))
+  x <- ag_col_def(x, {{ columns }},
+    valueFormatter = valueFormatter
   )
-  x <- ag_col_def(x,{{columns}},
-                  valueFormatter = valueFormatter
-  )
+  x
+}
+
+#-------------------------------------------------------------------------------
+#
+# Enable aggrid charts
+#
+#-------------------------------------------------------------------------------
+
+#' Enable aggrid charts
+#'
+#' @inheritParams ag_col_def
+#' @export
+enable_charts <- function(x) {
+  check_aggrid(x)
+  x$x$gridOptions$enableCharts <- TRUE
+  if (!isTRUE(x$x$gridOptions$enableRangeSelection)) {
+    cli::cli_warn("enable Charts must set enableRangeSelection to `TRUE`.")
+    x$x$gridOptions$enableRangeSelection <- TRUE
+  }
+  x$x$gridOptions$columnDefs[["rowid"]]$chartDataType <- "excluded"
+
+  for (i in seq_along(x$x$data)) {
+    name <- colnames(x$x$data)[i]
+    type <- class(x$x$data[[i]])
+    if (name == "rowid") {
+      next
+    } else {
+      chart_type <- switch(type,
+       "numeric" = "series",
+       "factor" = "category",
+       "character" = "category",
+       "integer" = "series",
+       "logical" = "category",
+       "Date" = "time",
+       "excluded"
+      )
+      x$x$gridOptions$columnDefs[[name]]$chartDataType <- chart_type
+    }
+  }
   x
 }

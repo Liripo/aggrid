@@ -20,18 +20,18 @@ Set aggrid Columns format
 data.frame(
   price = c(9603.01, 100, 98322),
   percent = c(0.9525556, 0.5, 0.112),
-  exponential = c(123456789,0.0001314,0.52),
-  bytes = c(1024^3,1024^2,1024)
+  exponential = c(123456789, 0.0001314, 0.52),
+  bytes = c(1024^3, 1024^2, 1024)
 ) |>
   aggrid() |>
-  ag_col_format(price,"$0,0.000") |>
-  ag_col_format(percent,"0.0\%") |>
-  ag_col_format(exponential,"0,0e+0") |>
-  ag_col_format(bytes,"0 b")
+  ag_col_format(price, "$0,0.000") |>
+  ag_col_format(percent, "0.0\%") |>
+  ag_col_format(exponential, "0,0e+0") |>
+  ag_col_format(bytes, "0 b")
 
 # custom valueFormatter
 data.frame(
-  Area = c(1000,200,40)
+  Area = c(1000, 200, 40)
 ) |>
   aggrid() |>
   ag_col_def(valueFormatter = JS('

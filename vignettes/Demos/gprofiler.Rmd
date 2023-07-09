@@ -1,0 +1,15 @@
+---
+title: "gprofiler"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```

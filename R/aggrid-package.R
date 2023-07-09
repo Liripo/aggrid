@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @import htmlwidgets
 #' @importFrom cli cli_abort
+#' @importFrom cli cli_warn
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise

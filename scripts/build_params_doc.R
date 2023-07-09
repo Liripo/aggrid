@@ -89,3 +89,17 @@ apply(doc18, 1, function(x) {
 apply(doc18, 1, function(x) {
   cat("#' @param",x[1],x[2],"\n")
 })
+
+
+doc10 <- all_doc[[10]]
+
+doc10$X1 <- sub("Type.*$","",doc10$X1) |> trimws()
+doc10$X2 <- sub("More details.*$ | See: .*$","",doc10$X2) |> trimws()
+
+apply(doc10, 1, function(x) {
+  cat(x[1]," = ",x[1],",\n",sep = "")
+})
+
+apply(doc10, 1, function(x) {
+  cat("#' @param",x[1],x[2],"\n")
+})

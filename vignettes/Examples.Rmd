@@ -20,6 +20,9 @@ To create aggrid table, use `aggrid()` on a data frame or matrix.
 
 ```{r setup}
 library(aggrid)
+library(dplyr)
+library(htmlwidgets)
+
 aggrid(iris)
 ```
 
@@ -30,23 +33,23 @@ aggrid(iris)
 For column width adjustment, you can use `ag_col_def()` or `ag_col_width()`.
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_def(columns = c(Sepal.Length,Sepal.Width),width = 80)
+aggrid(iris) |>
+  ag_col_def(columns = c(Sepal.Length, Sepal.Width), width = 80)
 ```
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_width(c(Sepal.Length,Sepal.Width),width = 80)
+aggrid(iris) |>
+  ag_col_width(c(Sepal.Length, Sepal.Width), width = 80)
 ```
 
 #### Size Columns to Fit
 
 If you don't want a particular column to be included in the auto resize, you can use `size_to_fit()`. For example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 ```{r}
-iris |> 
-  dplyr::relocate(Species) |> 
-  aggrid() |> 
-  ag_col_width(Species,width = 400) |> 
+iris |>
+  dplyr::relocate(Species) |>
+  aggrid() |>
+  ag_col_width(Species, width = 400) |>
   ag_size_fit()
 ```
 
@@ -55,7 +58,7 @@ iris |>
 Auto width to fit the contents of the cells in the column.
 
 ```{r}
-aggrid(iris) |> 
+aggrid(iris) |>
   ag_size_columns()
 ```
 
@@ -65,9 +68,9 @@ More options please see <https://www.ag-grid.com/javascript-data-grid/column-pro
 
 `aggrid()` default set columns filter, and automatically identify the data type to select filter mode. If you want to change the default behavior, please use `ag_col_filter()`. 
 ```{r}
-aggrid(iris) |> 
-  ag_col_filter(Sepal.Length,filter = FALSE) |> 
-  ag_col_filter(Species,filter = "agTextColumnFilter")
+aggrid(iris) |>
+  ag_col_filter(Sepal.Length, filter = FALSE) |>
+  ag_col_filter(Species, filter = "agTextColumnFilter")
 ```
 
 More options please see <https://www.ag-grid.com/javascript-data-grid/filter-text/>.
@@ -75,8 +78,8 @@ More options please see <https://www.ag-grid.com/javascript-data-grid/filter-tex
 ### Columns: pinned
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_pinned(Species,pinned = "left")
+aggrid(iris) |>
+  ag_col_pinned(Species, pinned = "left")
 ```
 
 ### Columns: Header
@@ -84,47 +87,51 @@ aggrid(iris) |>
 By default, `aggrid()` will remove colnames dots, use `ag_col_header()` can custom colnames.
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_header(Sepal.Length,headerName = c("Sepal.Length")) |> 
-  ag_col_header(Sepal.Width,headerName = c("Sepal.Width"))
+aggrid(iris) |>
+  ag_col_header(Sepal.Length, headerName = c("Sepal.Length")) |>
+  ag_col_header(Sepal.Width, headerName = c("Sepal.Width"))
 ```
 
 The above code is bad, you can use `ag_col_defs()` for vectorization.
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_defs(columns = everything(),headerName = names(iris))
+aggrid(iris) |>
+  ag_col_defs(columns = everything(), headerName = names(iris))
 ```
 
 [`menuTabs`](ag-grid.com/javascript-data-grid/column-properties/#reference-header-menuTabs) parameter default is `c('filterMenuTab','generalMenuTab','columnsMenuTab')`, 
 If you only want to filter menuTab, you can:
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_def(columns = Species,menuTabs = list('filterMenuTab'))
+head(iris, n = 10) |>
+  aggrid() |>
+  ag_col_def(columns = Species, menuTabs = list("filterMenuTab"))
 ```
 
 ### Columns: group
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal")
+head(iris, n = 10) |>
+  aggrid() |>
+  ag_col_group(columns = starts_with("Sepal"), headerName = "Sepal")
 ```
 
 Center header:
 ```{r}
-aggrid(iris) |> 
-  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal",headerClass = "ag-header-center") |> 
-  ag_col_group(columns = starts_with("Petal"),headerName = "Petal",headerClass = "ag-header-center")
+head(iris, n = 10) |>
+  aggrid() |>
+  ag_col_group(columns = starts_with("Sepal"), headerName = "Sepal", headerClass = "ag-header-center") |>
+  ag_col_group(columns = starts_with("Petal"), headerName = "Petal", headerClass = "ag-header-center")
 ```
 
 Set all content content center:
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_group(columns = starts_with("Sepal"),headerName = "Sepal",headerClass = "ag-header-center") |> 
-  ag_col_group(columns = starts_with("Petal"),headerName = "Petal",headerClass = "ag-header-center") |> 
-  ag_col_def(cellStyle = list(textAlign = "center"),headerClass = 'ag-header-center')
+head(iris, n = 10) |>
+  aggrid() |>
+  ag_col_group(columns = starts_with("Sepal"), headerName = "Sepal", headerClass = "ag-header-center") |>
+  ag_col_group(columns = starts_with("Petal"), headerName = "Petal", headerClass = "ag-header-center") |>
+  ag_col_def(cellStyle = list(textAlign = "center"), headerClass = "ag-header-center")
 ```
 
 ### Columns: format
@@ -133,36 +140,97 @@ aggrid(iris) |>
 
 ```{r}
 data.frame(
-    price = c(9603.01, 100, 98322),
-    percent = c(0.9525556, 0.5, 0.112),
-    exponential = c(123456789,0.0001314,0.52),
-    bytes = c(1024^3,1024^2,1024)
-) |> 
-  aggrid() |> 
-  ag_col_format(price,"$0,0.000") |> 
-  ag_col_format(percent,"0.0%") |> 
-  ag_col_format(exponential,"0,0e+0") |> 
-  ag_col_format(bytes,"0 b")
+  price = c(9603.01, 100, 98322),
+  percent = c(0.9525556, 0.5, 0.112),
+  exponential = c(123456789, 0.0001314, 0.52),
+  bytes = c(1024^3, 1024^2, 1024)
+) |>
+  aggrid() |>
+  ag_col_format(price, "$0,0.000") |>
+  ag_col_format(percent, "0.0%") |>
+  ag_col_format(exponential, "0,0e+0") |>
+  ag_col_format(bytes, "0 b")
 ```
 
 Custom columns format use `valueFormatter`:
 
 ```{r}
 data.frame(
-  Area = c(1000,200,40)
-) |> 
-  aggrid() |> 
-  ag_col_def(valueFormatter = htmlwidgets::JS('
+  Area = c(1000, 200, 40)
+) |>
+  aggrid() |>
+  ag_col_def(valueFormatter = JS('
     (params) => {return params.value + " mi\u00b2";};
   '))
+```
+
+### Coulmns: CellRender
+
+`valueFormatter` mainly used for formatting, and `cellRenderer` use for adding html tags and `cellStyle` use for cell style.
+
+```{r}
+data.frame(
+  go_term = c("GO:0140359", "GO:0036094", "GO:0048029", "GO:0042626", "GO:0097367"),
+  p_value = c(3.30e-07, 1.60473e-06, 2.47191e-01, 1.19e-05, 0.05)
+) |>
+  aggrid() |>
+  ag_col_render(go_term, cellRenderer = JS('(params) => {
+    return `<a href="https://amigo.geneontology.org/amigo/term/${params.value}">${params.value}</a>`
+  };')) |>
+  ag_col_render(p_value, cellStyle = JS('function(params) {
+    if (params.value <= 0.05) {
+      return { color: "green" };
+    } else{
+      return { color: "red" };
+    }
+  }'))
+```
+
+> TO DO: need to encapsulate some simple functions to modify the cellRender.
+
+## Sparkline
+
+### line plot and column plot
+
+```{r}
+mtcars |>
+  dplyr::group_by(cyl) |>
+  dplyr::summarize(mpg_line = list(mpg)) |>
+  aggrid() |>
+  ag_col_render(mpg_line, cellRenderer = "agSparklineCellRenderer")
+```
+
+Note in the snippet above that specifying an `agSparklineCellRenderer` will display the data using the default `line` sparkline. 
+
+
+Sparklines are customised by supplying `sparklineOptions` to the `cellRendererParams` on the Sparkline Cell Renderer as shown below. For example：
+
+### bar plot
+
+```{r}
+head(mtcars, n = 10) |>
+  dplyr::mutate(mpg_plot = mpg / max(mpg)) |>
+  dplyr::select(cyl, mpg_plot) |>
+  aggrid() |>
+  ag_col_render(mpg_plot,
+    cellRenderer = "agSparklineCellRenderer",
+    cellRendererParams = list(
+      sparklineOptions = list(
+        type = "bar",
+        valueAxisDomain = c(0, 1)
+      )
+    )
+  )
 ```
 
 ## Row group
 
 ```{r}
-aggrid(iris) |> 
-  ag_col_def(Species,rowGroup = T)
+aggrid(iris) |>
+  ag_col_def(Species, rowGroup = T)
 ```
+
+> ps: Currently does not support server mode, welcome to contribute.
 
 ## Accessories
 
@@ -170,31 +238,37 @@ aggrid(iris) |>
 
 Default has statusBar, you can set it `FALSE` use `ag_gridOptions()`:
 ```{r}
-aggrid(iris) |> 
+aggrid(iris) |>
   ag_gridOptions(statusBar = FALSE)
 ```
 
 ### Side Bar
 
 ```{r}
-aggrid(iris) |> 
+aggrid(iris) |>
   ag_gridOptions(sideBar = TRUE)
 ```
 
 Custom Side bar:
 
 ```{r}
-aggrid(iris) |> 
+aggrid(iris) |>
   ag_gridOptions(sideBar = list(
     toolPanels = list(
       list(
-        id = 'columns',
-        labelDefault = 'Columns',
-        labelKey = 'columns',
-        iconKey = 'columns',
-        toolPanel = 'agColumnsToolPanel'
+        id = "columns",
+        labelDefault = "Columns",
+        labelKey = "columns",
+        iconKey = "columns",
+        toolPanel = "agColumnsToolPanel"
       )
     )
   ))
+```
 
+## Charts
+
+```{r}
+aggrid(iris) |> 
+  enable_charts()
 ```
