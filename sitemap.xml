@@ -10,6 +10,9 @@
     <loc>https://liripo.github.io/aggrid/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://liripo.github.io/aggrid/articles/Demos/gprofiler.html</loc>
+  </url>
+  <url>
     <loc>https://liripo.github.io/aggrid/articles/Examples.html</loc>
   </url>
   <url>
@@ -49,6 +52,9 @@
     <loc>https://liripo.github.io/aggrid/reference/ag_col_pinned.html</loc>
   </url>
   <url>
+    <loc>https://liripo.github.io/aggrid/reference/ag_col_render.html</loc>
+  </url>
+  <url>
     <loc>https://liripo.github.io/aggrid/reference/ag_col_sort.html</loc>
   </url>
   <url>
@@ -80,6 +86,9 @@
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/aggrid_dependency.html</loc>
+  </url>
+  <url>
+    <loc>https://liripo.github.io/aggrid/reference/enable_charts.html</loc>
   </url>
   <url>
     <loc>https://liripo.github.io/aggrid/reference/filter_to_expr.html</loc>

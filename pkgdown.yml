@@ -2,9 +2,10 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  gprofiler: Demos/gprofiler.html
   Examples: Examples.html
   Intro: Intro.html
-last_built: 2023-07-08T17:35Z
+last_built: 2023-07-09T12:16Z
 urls:
   reference: https://liripo.github.io/aggrid/reference
   article: https://liripo.github.io/aggrid/articles

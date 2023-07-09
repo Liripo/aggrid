@@ -40,8 +40,6 @@ HTMLWidgets.widget({
         // x.gridOptions.columnDefs = x.gridOptions.columnDefs;
 
         gridOptions = x.gridOptions;
-
-        // Whether to allow users to override？
         if (HTMLWidgets.shinyMode) {
           gridOptions.onSelectionChanged = onSelectionChanged;
         }
