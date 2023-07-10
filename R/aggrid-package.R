@@ -5,8 +5,10 @@
 #' @import htmlwidgets
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_warn
+#' @importFrom dplyr across
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
+#' @importFrom dplyr select
 #' @importFrom dplyr summarise
 #' @importFrom glue glue
 #' @importFrom htmlwidgets JS

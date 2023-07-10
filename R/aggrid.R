@@ -104,55 +104,6 @@ aggrid <- function(data,
   if (server) {
     session <- shiny::getDefaultReactiveDomain()
     outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
-    filterFunc <- function(data, req) {
-      params <- rawToChar(req$rook.input$read()) |>
-        jsonlite::fromJSON()
-      if (!rlang::is_empty(params$sortModel)) {
-        ## 排序
-        sortModel <- params$sortModel
-        order_index <- do.call(
-          function(...) {
-            order(..., decreasing = sortModel$sort == "desc")
-          },
-          lapply(sortModel$colId, function(col) {
-            data[[col]]
-          })
-        )
-
-        data <- data[order_index, ]
-      }
-      # 过滤
-      if (!rlang::is_empty(params$filterModel)) {
-        for (i in seq_along(params$filterModel)) {
-          colum_name <- names(params$filterModel)[i]
-          filterModel <- params$filterModel[[i]]
-          filter_expr <- rlang::parse_expr(filter_to_expr(colum_name, filterModel))
-          print(filter_expr)
-          data <- data |>
-            dplyr::filter(!!filter_expr)
-        }
-      }
-      if (!rlang::is_empty(params$rowGroupCols)) {
-        cli::cli_abort("Server model don't support.Welcome to contribute.")
-        # data <- data |>
-        #   dplyr::group_by(Species) |>
-        #   dplyr::summarise()
-      }
-
-      slice_data <- data |>
-        dplyr::slice((params$startRow + 1):params$endRow)
-
-      shiny::httpResponse(
-        status = 200L,
-        content_type = "application/json",
-        content = jsonlite::toJSON(
-          list(
-            rowData = slice_data,
-            lastRow = nrow(data)
-          )
-        )
-      )
-    }
     dataURL <- session$registerDataObj(
       outputId,
       data = data,
@@ -244,6 +195,59 @@ preRender_aggrid <- function(x) {
   }
   names(x$x$gridOptions$columnDefs) <- NULL
   return(x)
+}
+
+# session$registerDataObj filter function
+# TO DO: custom backend
+filterFunc <- function(data, req) {
+  params <- rawToChar(req$rook.input$read()) |>
+    jsonlite::fromJSON()
+
+  if (!rlang::is_empty(params$sortModel)) {
+    ## 排序
+    sortModel <- params$sortModel
+    order_index <- do.call(
+      function(...) {
+        order(..., decreasing = sortModel$sort == "desc")
+      },
+      lapply(sortModel$colId, function(col) {
+        data[[col]]
+      })
+    )
+
+    data <- data[order_index, ]
+  }
+  # 过滤
+  if (!rlang::is_empty(params$filterModel)) {
+    for (i in seq_along(params$filterModel)) {
+      colum_name <- names(params$filterModel)[i]
+      filterModel <- params$filterModel[[i]]
+      filter_expr <- rlang::parse_expr(filter_to_expr(colum_name, filterModel))
+      print(filter_expr)
+      data <- data |>
+        dplyr::filter(!!filter_expr)
+    }
+  }
+  if (!rlang::is_empty(params$rowGroupCols)) {
+    # cli::cli_abort("Server model don't support.Welcome to contribute.")
+    data <- data |>
+      dplyr::group_by(Species) |>
+      dplyr::summarise()
+  }
+
+  slice_data <- data |>
+    dplyr::slice((params$startRow + 1):params$endRow)
+
+  shiny::httpResponse(
+    status = 200L,
+    content_type = "application/json",
+    content = jsonlite::toJSON(
+      list(
+        rowData = slice_data,
+        lastRow = nrow(data)
+      )
+    )
+  )
 }
 
 #' Shiny bindings for aggrid

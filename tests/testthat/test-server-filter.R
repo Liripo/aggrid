@@ -42,3 +42,17 @@ test_that("test server set filter Model", {
   )
   expect_equal(2 * 2, 4)
 })
+
+test_that("server group",{
+  params <- list(
+    startRow = 0,
+    endRow = 100,
+    rowGroupCols = data.frame(id = "Species",displayName = "Species",field = "Species"),
+    valueCols = list(),
+    pivotCols = list(),
+    pivotMode = FALSE,
+    groupKeys = "setosa",
+    filterModel = list(),
+    sortModel = list()
+  )
+})
