@@ -9,13 +9,6 @@ HTMLWidgets.widget({
 
     // TODO: define shared variables for this instance
     let gridOptions = {};
-    const onSelectionChanged = function(event) {
-      // should use data id
-      id = el.id + "_" + "rows_selected"
-      let row_index = event.api.getSelectedNodes();
-      row_index = row_index.map((item) => item.data.rowid);
-      Shiny.setInputValue(id, value = row_index);
-    };
     const getRowId = function(params) {
       // TO DO: group unique id
       // https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/#supplying-unique-group-ids
@@ -38,7 +31,24 @@ HTMLWidgets.widget({
 
         // columnDefs dict to assay; R Object has names will covert to dict
         // x.gridOptions.columnDefs = x.gridOptions.columnDefs;
-
+        const onSelectionChanged = function(event) {
+          // should use data id
+          id = el.id + "_" + "rows_selected"
+          let row_index;
+          if (x.server) {
+            let state = event.api.getServerSideSelectionState();
+            if (state.selectAll) {
+              row_index = [...Array(x.n_row)].map((v, k) => k + 1);
+            } else {
+              row_index = event.api.getSelectedNodes();
+              row_index = row_index.map((item) => item.data.rowid);
+            }
+          } else{
+            row_index = event.api.getSelectedNodes();
+            row_index = row_index.map((item) => item.data.rowid);
+          }
+          Shiny.setInputValue(id, value = row_index);
+        };
         gridOptions = x.gridOptions;
         if (HTMLWidgets.shinyMode) {
           gridOptions.onSelectionChanged = onSelectionChanged;
