@@ -230,8 +230,6 @@ aggrid(iris) |>
   ag_col_def(Species, rowGroup = T)
 ```
 
-> ps: Currently does not support server mode, welcome to contribute.
-
 ## Accessories
 
 ### statusBar
