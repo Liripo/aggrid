@@ -16,11 +16,16 @@ HTMLWidgets.widget({
       if (rowGroupCols.length == 0) {
         return params.data.rowid;
       }
+      var Id;
       const thisGroupCol = rowGroupCols[params.level];
-      var Id = params.data[thisGroupCol.getColDef().field];
+      if (params.parentKeys === undefined) {
+        Id = params.data[thisGroupCol.getColDef().field];
+      } else {
+        Id = params.parentKeys[0];
+      }
 
-      if (params.data.rowid != undefined) {
-        Id + params.data.rowid;
+      if (params.data.rowid !== undefined) {
+        Id = Id + params.data.rowid;
       }
       return Id;
     };
