@@ -31,3 +31,4 @@ Depends:
 VignetteBuilder: knitr
 URL: https://liripo.github.io/aggrid/,https://github.com/Liripo/aggrid
 BugReports: https://github.com/Liripo/aggrid/issues
+LazyData: true

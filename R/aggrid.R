@@ -2,7 +2,7 @@
 #'
 #' This function creates a HTML widget to display matrix or a data frame using ag-grid.
 #' @param data data frame or matrix.
-#' @param rowSelection three options：`multiple`,`single`,`none`.
+#' @param rowSelection three options：`multiple`,`single`.
 #' @param checkboxSelection Enable checkbox in first column?
 #' @param pagination Enable pagination allows?
 #' @param paginationPageSize default size is `10`.
@@ -27,11 +27,11 @@
 #' aggrid(iris) |> auto_size_columns()
 #' @export
 aggrid <- function(data,
-                   rowSelection = c("multiple", "single", "none"),
+                   rowSelection = c("multiple", "single"),
+                   suppressRowClickSelection = FALSE,
                    checkboxSelection = FALSE,
                    pagination = FALSE,
                    paginationPageSize = 10,
-                   domLayout = NULL,
                    ...,
                    theme = "ag-theme-balham",
                    community = FALSE,
@@ -48,7 +48,6 @@ aggrid <- function(data,
   stopifnot(is.data.frame(data))
   # data <- data.table::as.data.table(data)
   rowSelection <- match.arg(rowSelection)
-  suppressRowClickSelection <- if (rowSelection == "none") TRUE else FALSE
   n_row <- nrow(data)
 
   # need to make row id
@@ -79,7 +78,8 @@ aggrid <- function(data,
   if (isTRUE(checkboxSelection)) {
     column_defs[[1]] <- c(
       column_defs[[1]],
-      list(checkboxSelection = TRUE, headerCheckboxSelection = rowSelection == "multiple")
+      list(checkboxSelection = TRUE,
+           headerCheckboxSelection = rowSelection != "single")
     )
   }
 

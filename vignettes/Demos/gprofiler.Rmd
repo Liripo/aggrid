@@ -13,3 +13,58 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+```{r}
+library(aggrid)
+
+library(dplyr)
+# Example datasets
+gprofiler_data
+go_mf <- gprofiler_data |> 
+  filter(source == "GO:MF")
+```
+
+```{css}
+.vertical-header {
+  writing-mode: vertical-lr;  
+  text-orientation: upright;
+}
+```
+
+```{r}
+table <- go_mf |> 
+  select(-source) |> 
+  relocate(term_id) |> 
+  aggrid(checkboxSelection = T,suppressRowClickSelection = T) |> 
+  ag_col_width(term_name,maxWidth = 380) |> 
+  ag_col_group(1:2,headerName = "GO: MF") |> 
+  ag_col_group(3:5,headerName = "Stats") |> 
+  ag_col_def(columns = starts_with("ENSG") ,headerClass = "rotated-header",sortable = F,filter = F,suppressSpanHeaderHeight = T) |> 
+  # 自定义 p 值渲染
+  ag_col_def(p_value,cellRenderer = JS('
+function exponentToSup(params) {
+  let formatted = params.value.toExponential(3).toString().replace(/e(.*)/, "<sup>$1</sup>");
+
+  return formatted; 
+}')) |> 
+  ag_col_render("−log10(pval)",
+    cellRenderer = "agSparklineCellRenderer",
+    cellRendererParams = list(
+      sparklineOptions = list(
+        type = "bar",
+        valueAxisDomain = range(go_mf$`−log10(pval)`)
+      )
+    )
+  )
+
+
+tagList(
+  tags$style('
+.rotated-header {
+  transform: rotate(90deg);
+  white-space: nowrap;
+}'),
+table |> 
+  ag_gridOptions(headerHeight = 32,groupHeaderHeight = 80)
+) |> browsable()
+```
