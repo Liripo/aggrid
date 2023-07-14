@@ -14,7 +14,8 @@ ag_col_filter(
   floatingFilter = NULL,
   floatingFilterComponent = NULL,
   floatingFilterComponentParams = NULL,
-  suppressFiltersToolPanel = NULL
+  suppressFiltersToolPanel = NULL,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ ag_col_filter(
 \item{floatingFilterComponentParams}{Params to be passed to floatingFilterComponent.}
 
 \item{suppressFiltersToolPanel}{Set to true if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 }
 \description{
 Columns: Filter

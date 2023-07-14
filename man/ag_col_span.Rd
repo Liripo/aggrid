@@ -4,7 +4,7 @@
 \alias{ag_col_span}
 \title{Columns: Spanning}
 \usage{
-ag_col_span(x, columns = NULL, colSpan = NULL, rowSpan = NULL)
+ag_col_span(x, columns = NULL, colSpan = NULL, rowSpan = NULL, ...)
 }
 \arguments{
 \item{x}{aggrid Object}
@@ -14,6 +14,8 @@ ag_col_span(x, columns = NULL, colSpan = NULL, rowSpan = NULL)
 \item{colSpan}{By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns.}
 
 \item{rowSpan}{By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 }
 \description{
 Columns: Spanning

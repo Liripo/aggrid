@@ -172,7 +172,8 @@ ag_col_header <- function(x,
                           suppressHeaderKeyboardEvent = NULL,
                           headerCheckboxSelection = NULL,
                           headerCheckboxSelectionFilteredOnly = NULL,
-                          headerCheckboxSelectionCurrentPageOnly = NULL) {
+                          headerCheckboxSelectionCurrentPageOnly = NULL,
+                          ...) {
   ag_col_def(x,
     columns = {{ columns }},
     headerName = headerName,
@@ -189,7 +190,8 @@ ag_col_header <- function(x,
     suppressHeaderKeyboardEvent = suppressHeaderKeyboardEvent,
     headerCheckboxSelection = headerCheckboxSelection,
     headerCheckboxSelectionFilteredOnly = headerCheckboxSelectionFilteredOnly,
-    headerCheckboxSelectionCurrentPageOnly = headerCheckboxSelectionCurrentPageOnly
+    headerCheckboxSelectionCurrentPageOnly = headerCheckboxSelectionCurrentPageOnly,
+    ...
   )
 }
 
@@ -247,7 +249,7 @@ ag_col_filter <- function(x,
                           floatingFilter = NULL,
                           floatingFilterComponent = NULL,
                           floatingFilterComponentParams = NULL,
-                          suppressFiltersToolPanel = NULL) {
+                          suppressFiltersToolPanel = NULL,...) {
   ag_col_def(x,
     columns = {{ columns }},
     filter = filter,
@@ -257,7 +259,8 @@ ag_col_filter <- function(x,
     floatingFilter = floatingFilter,
     floatingFilterComponent = floatingFilterComponent,
     floatingFilterComponentParams = floatingFilterComponentParams,
-    suppressFiltersToolPanel = suppressFiltersToolPanel
+    suppressFiltersToolPanel = suppressFiltersToolPanel,
+    ...
   )
 }
 
@@ -271,12 +274,14 @@ ag_col_pinned <- function(x,
                           columns = NULL,
                           pinned = NULL,
                           initialPinned = NULL,
-                          lockPinned = NULL) {
+                          lockPinned = NULL,
+                          ...) {
   ag_col_def(x,
     columns = {{ columns }},
     pinned = pinned,
     initialPinned = initialPinned,
-    lockPinned = lockPinned
+    lockPinned = lockPinned,
+    ...
   )
 }
 
@@ -323,7 +328,8 @@ ag_col_render <- function(x,
                           autoHeight = NULL,
                           wrapText = NULL,
                           enableCellChangeFlash = NULL,
-                          suppressCellFlash = NULL) {
+                          suppressCellFlash = NULL,
+                          ...) {
   spark_value_gatter <- NULL
   if (is.character(cellRenderer) &&
       cellRenderer == "agSparklineCellRenderer") {
@@ -350,7 +356,8 @@ ag_col_render <- function(x,
     wrapText = wrapText,
     enableCellChangeFlash = enableCellChangeFlash,
     suppressCellFlash = suppressCellFlash,
-    valueGetter = spark_value_gatter
+    valueGetter = spark_value_gatter,
+    ...
   )
 }
 
@@ -374,7 +381,8 @@ ag_col_sort <- function(x,
                         initialSortIndex = NULL,
                         sortingOrder = NULL,
                         comparator = NULL,
-                        unSortIcon = NULL) {
+                        unSortIcon = NULL,
+                        ...) {
   ag_col_def(x,
     columns = {{ columns }},
     sortable = sortable,
@@ -384,7 +392,8 @@ ag_col_sort <- function(x,
     initialSortIndex = initialSortIndex,
     sortingOrder = sortingOrder,
     comparator = comparator,
-    unSortIcon = unSortIcon
+    unSortIcon = unSortIcon,
+    ...
   )
 }
 
@@ -396,11 +405,13 @@ ag_col_sort <- function(x,
 ag_col_span <- function(x,
                         columns = NULL,
                         colSpan = NULL,
-                        rowSpan = NULL) {
+                        rowSpan = NULL,
+                        ...) {
   ag_col_def(x,
     columns = {{ columns }},
     colSpan = colSpan,
-    rowSpan = rowSpan
+    rowSpan = rowSpan,
+    ...
   )
 }
 
@@ -417,13 +428,15 @@ ag_col_tooltip <- function(x,
                            tooltipField = NULL,
                            tooltipValueGetter = NULL,
                            tooltipComponent = NULL,
-                           tooltipComponentParams = NULL) {
+                           tooltipComponentParams = NULL,
+                           ...) {
   ag_col_def(x,
     columns = {{ columns }},
     tooltipField = tooltipField,
     tooltipValueGetter = tooltipValueGetter,
     tooltipComponent = tooltipComponent,
-    tooltipComponentParams = tooltipComponentParams
+    tooltipComponentParams = tooltipComponentParams,
+    ...
   )
 }
 
@@ -453,7 +466,8 @@ ag_col_width <- function(x,
                          initialFlex = NULL,
                          resizable = NULL,
                          suppressSizeToFit = NULL,
-                         suppressAutoSize = NULL) {
+                         suppressAutoSize = NULL,
+                         ...) {
   ag_col_def(x,
     columns = {{ columns }},
     width = width,
@@ -464,7 +478,8 @@ ag_col_width <- function(x,
     initialFlex = initialFlex,
     resizable = resizable,
     suppressSizeToFit = suppressSizeToFit,
-    suppressAutoSize = suppressAutoSize
+    suppressAutoSize = suppressAutoSize,
+    ...
   )
 }
 
@@ -630,3 +645,15 @@ enable_charts <- function(x) {
   }
   x
 }
+
+
+#-------------------------------------------------------------------------------
+#
+# sparkline
+#
+#-------------------------------------------------------------------------------
+
+#' #' @param type
+#' ag_sparkline <- function(x,column,type) {
+#'
+#' }

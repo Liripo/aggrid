@@ -29,6 +29,7 @@
 aggrid <- function(data,
                    rowSelection = c("multiple", "single"),
                    suppressRowClickSelection = FALSE,
+                   selectedRows = NULL,
                    checkboxSelection = FALSE,
                    pagination = FALSE,
                    paginationPageSize = 10,
@@ -40,7 +41,6 @@ aggrid <- function(data,
                    width = NULL,
                    height = NULL,
                    elementId = NULL) {
-
   # --------------- para check
   if (is.matrix(data)) {
     data <- as.data.frame(data)
@@ -81,6 +81,12 @@ aggrid <- function(data,
       list(checkboxSelection = TRUE,
            headerCheckboxSelection = rowSelection != "single")
     )
+  }
+
+  # default rowSelected
+  if (!is.null(selectedRows)) {
+    if (rowSelection == "single" && length(selectedRows) > 1) {
+    }
   }
 
   domLayout <- if (pagination || nrow(data) <= 15) {
@@ -139,6 +145,7 @@ aggrid <- function(data,
     ),
     theme = theme,
     data = data,
+    selectedRows = selectedRows,
     server = server,
     dataURL = dataURL,
     n_row = n_row

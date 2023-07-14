@@ -9,7 +9,8 @@ ag_col_pinned(
   columns = NULL,
   pinned = NULL,
   initialPinned = NULL,
-  lockPinned = NULL
+  lockPinned = NULL,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ ag_col_pinned(
 \item{initialPinned}{Same as pinned, except only applied when creating a new column. Not applied when updating column definitions.}
 
 \item{lockPinned}{Set to true to block the user pinning the column, the column can only be pinned via definitions or API.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 }
 \description{
 Columns: Pinned

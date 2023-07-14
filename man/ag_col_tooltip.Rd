@@ -10,7 +10,8 @@ ag_col_tooltip(
   tooltipField = NULL,
   tooltipValueGetter = NULL,
   tooltipComponent = NULL,
-  tooltipComponentParams = NULL
+  tooltipComponentParams = NULL,
+  ...
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ ag_col_tooltip(
 \item{tooltipValueGetter}{Callback that should return the string to use for a tooltip, \code{tooltipField} takes precedence if set. If using a custom \code{tooltipComponent} you may return any custom value to be passed to your tooltip component.}
 
 \item{tooltipComponent}{Provide your own tooltip component for the column.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 
 \item{The}{params used to configure \code{tooltipComponent}.}
 }

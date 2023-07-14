@@ -16,7 +16,8 @@ ag_col_render(
   autoHeight = NULL,
   wrapText = NULL,
   enableCellChangeFlash = NULL,
-  suppressCellFlash = NULL
+  suppressCellFlash = NULL,
+  ...
 )
 }
 \arguments{

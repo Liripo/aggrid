@@ -21,7 +21,8 @@ ag_col_header(
   suppressHeaderKeyboardEvent = NULL,
   headerCheckboxSelection = NULL,
   headerCheckboxSelectionFilteredOnly = NULL,
-  headerCheckboxSelectionCurrentPageOnly = NULL
+  headerCheckboxSelectionCurrentPageOnly = NULL,
+  ...
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ ag_col_header(
 \item{headerCheckboxSelectionFilteredOnly}{If true, the header checkbox selection will only select filtered items.}
 
 \item{headerCheckboxSelectionCurrentPageOnly}{If true, the header checkbox selection will only select nodes on the current page.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 }
 \description{
 Columns: Header

@@ -15,19 +15,59 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(aggrid)
-
+#library(aggrid)
+devtools::load_all("../../")
 library(dplyr)
 # Example datasets
-gprofiler_data
 go_mf <- gprofiler_data |> 
   filter(source == "GO:MF")
+go_mf
 ```
 
 ```{css}
-.vertical-header {
-  writing-mode: vertical-lr;  
-  text-orientation: upright;
+.rotated-header {
+  transform: rotate(90deg);
+  white-space: nowrap;
+  border-top： none !important;
+}
+.filtered-indicator {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 10px;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid lightgrey !important;
+    font-size: 5px;
+}
+
+.filtered-indicator.filtered {
+    background-color: darkgray;
+}
+
+.evidence-code {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid lightgrey;
+    font-size: 5px;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.customHeaderLabel {
+    font-size: 8px;
+    top: -80px;
+    float: left;
+    border-left: 1px solid lightgrey;
+    border-right: 1px solid lightgrey;
+    background-color: #f5f7f7;
+    padding: 5px 0;
+    writing-mode: tb-rl;
+    writing-mode: vertical-lr;
 }
 ```
 
@@ -39,32 +79,116 @@ table <- go_mf |>
   ag_col_width(term_name,maxWidth = 380) |> 
   ag_col_group(1:2,headerName = "GO: MF") |> 
   ag_col_group(3:5,headerName = "Stats") |> 
-  ag_col_def(columns = starts_with("ENSG") ,headerClass = "rotated-header",sortable = F,filter = F,suppressSpanHeaderHeight = T) |> 
-  # 自定义 p 值渲染
+  # custom pvalue cellrender
   ag_col_def(p_value,cellRenderer = JS('
 function exponentToSup(params) {
   let formatted = params.value.toExponential(3).toString().replace(/e(.*)/, "<sup>$1</sup>");
 
   return formatted; 
-}')) |> 
+}'))
+```
+
+## add sparkline bar
+
+
+```{r}
+# see more <https://www.ag-grid.com/javascript-data-grid/sparklines-bar-customisation/>
+bar_formatter <- function(values,palette = "viridis") {
+  cols <- scales::col_numeric(palette, domain = NULL)(values)
+  names(cols) <- values
+  cols_dict = jsonlite::toJSON(as.list(cols),auto_unbox = T)
+
+  formatter_code <- htmlwidgets::JS(sprintf('function formatter(params) {
+  const cols_dict = %s;
+  const { yValue } = params;
+  const col = cols_dict[yValue];
+  return {fill: col}
+}',cols_dict))
+  formatter_code
+}
+table <- table |> 
   ag_col_render("−log10(pval)",
     cellRenderer = "agSparklineCellRenderer",
     cellRendererParams = list(
       sparklineOptions = list(
         type = "bar",
-        valueAxisDomain = range(go_mf$`−log10(pval)`)
+        valueAxisDomain = range(go_mf$`−log10(pval)`),
+        formatter = bar_formatter(go_mf$`−log10(pval)`)
       )
-    )
+    ),
+    minWidth = 200
   )
+```
 
+## highlighted columns
 
-tagList(
-  tags$style('
-.rotated-header {
-  transform: rotate(90deg);
-  white-space: nowrap;
+```{r}
+table <- table |> 
+  ag_col_def(highlighted,cellRenderer = JS('
+(params) => {
+  const a = params.value ? "filtered-indicator filtered" : "filtered-indicator";
+  return `<span class = "${a}"></span>`;
 }'),
+  width = 10,
+  suppressSizeToFit = TRUE,
+  cellClass = 'no-padding',sortable = F,menuTabs = FALSE)
+```
+
+```{r}
+get_gene_color_code <- function(go_mf) {
+  levels <- dplyr::select(go_mf,starts_with("ENSG")) |> 
+    as.matrix() |> as.character() |> unique()
+  gene_colors <- scales::col_factor("Set1",domain = NULL,na.color = "white")(levels)
+  names(gene_colors) <- levels
+  gene_cell_render_code <- JS(sprintf('
+  (params) => {
+    const gene_colors = %s;
+    return `<span class = "evidence-code" style = "background-color: ${gene_colors[params.value]}"></span>`;
+  }',jsonlite::toJSON(as.list(gene_colors),auto_unbox = T)))
+}
+
+# custom tootip
+# copy from https://www.ag-grid.com/javascript-data-grid/component-tooltip/
+
+tooltipComponent <- JS(r"(
+class CustomTooltip {
+    init(params) {
+        const eGui = this.eGui = document.createElement('div');
+        const color = params.color || '#4b4646';
+        console.log(params.value);
+        eGui.classList.add('custom-tooltip');
+        eGui.style['background-color'] = color;
+        eGui.style['color'] = "white";
+        eGui.innerHTML = `
+            <div style = "padding: 2px 6px;text-align: center;">
+                <span>${params.value}</span><br/>
+                ${params.column.colId}
+            </div>
+        `;
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+}
+)")
+
 table |> 
-  ag_gridOptions(headerHeight = 32,groupHeaderHeight = 80)
-) |> browsable()
+  ag_col_def(columns = starts_with("ENSG") ,
+             # headerClass = "rotated-header",
+             sortable = F,
+             menuTabs = F,
+             suppressSpanHeaderHeight = F,
+             headerClass = "customHeaderLabel",
+             width = 20,
+             cellClass = 'no-padding',
+             cellRenderer = get_gene_color_code(go_mf),
+    tooltipValueGetter = JS('(params) => { return params.value;}'),
+    tooltipComponent = tooltipComponent
+  ) |> 
+  # set aggrid options
+  ag_gridOptions(headerHeight = 32,groupHeaderHeight = 95,
+    getContextMenuItems = JS('() => []'),
+    tooltipShowDelay = 0) |> 
+  ag_size_columns(skipHeader = T)
 ```

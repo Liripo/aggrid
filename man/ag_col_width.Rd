@@ -15,7 +15,8 @@ ag_col_width(
   initialFlex = NULL,
   resizable = NULL,
   suppressSizeToFit = NULL,
-  suppressAutoSize = NULL
+  suppressAutoSize = NULL,
+  ...
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ ag_col_width(
 \item{suppressSizeToFit}{Set to true if you want this column's width to be fixed during 'size to fit' operations.}
 
 \item{suppressAutoSize}{Set to true if you do not want this column to be auto-resizable by double clicking it's edge.}
+
+\item{...}{please see \url{https://www.ag-grid.com/javascript-data-grid/column-properties/}.}
 }
 \description{
 More message: \url{https://www.ag-grid.com/javascript-data-grid/column-properties/#reference-width}

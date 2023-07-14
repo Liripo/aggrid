@@ -6,11 +6,12 @@
 \usage{
 aggrid(
   data,
-  rowSelection = c("multiple", "single", "none"),
+  rowSelection = c("multiple", "single"),
+  suppressRowClickSelection = FALSE,
+  selectedRows = NULL,
   checkboxSelection = FALSE,
   pagination = FALSE,
   paginationPageSize = 10,
-  domLayout = NULL,
   ...,
   theme = "ag-theme-balham",
   community = FALSE,
@@ -24,7 +25,7 @@ aggrid(
 \arguments{
 \item{data}{data frame or matrix.}
 
-\item{rowSelection}{three options：\code{multiple},\code{single},\code{none}.}
+\item{rowSelection}{three options：\code{multiple},\code{single}.}
 
 \item{checkboxSelection}{Enable checkbox in first column?}
 
