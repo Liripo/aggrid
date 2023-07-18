@@ -14,10 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
-#library(aggrid)
-devtools::load_all("../../")
+```{r,include=FALSE}
+library(aggrid)
 library(dplyr)
+library(htmlwidgets)
+```
+
+```{r}
 # Example datasets
 go_mf <- gprofiler_data |> 
   filter(source == "GO:MF")

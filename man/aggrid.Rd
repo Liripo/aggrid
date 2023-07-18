@@ -27,6 +27,10 @@ aggrid(
 
 \item{rowSelection}{three options：\code{multiple},\code{single}.}
 
+\item{suppressRowClickSelection}{When \code{TRUE}, disable row selection when clicking.}
+
+\item{selectedRows}{set default selectedRows rows.}
+
 \item{checkboxSelection}{Enable checkbox in first column?}
 
 \item{pagination}{Enable pagination allows?}
@@ -58,4 +62,8 @@ aggrid(iris, theme = "ag-theme-alpine")
 
 ## auto size columns
 aggrid(iris) |> auto_size_columns()
+
+## select row
+head(iris, n = 10) |>
+  aggrid(checkboxSelection = T,selectedRows = 1:3)
 }

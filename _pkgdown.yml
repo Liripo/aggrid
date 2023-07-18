@@ -4,12 +4,21 @@ template:
 
 navbar:
   structure:
-    left: [examples, articles, reference]
+    left: [examples, articles,reference]
     right: [search,github]
-
-examples:
-  - text: Examples
-    href: articles/Examples.html
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Demos gprofiler
+        href: articles/Demos/gprofiler.html
+    examples:
+      text: Examples
+      menu:
+      - text: Examples 1 Coulmns Properties
+        href: articles/Examples.html
+      - text: Examples 2
+        href: articles/Examples2.html
 # reference:
 #   - title: Create tables
 #     contents:

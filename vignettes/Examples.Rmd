@@ -1,5 +1,5 @@
 ---
-title: "Examples"
+title: "Examples 1: Coulmns Properties"
 output:
   html_document:
     toc: true
@@ -188,85 +188,4 @@ data.frame(
 
 > TO DO: need to encapsulate some simple functions to modify the cellRender.
 
-## Sparkline
-
-### line plot and column plot
-
-```{r}
-mtcars |>
-  dplyr::group_by(cyl) |>
-  dplyr::summarize(mpg_line = list(mpg)) |>
-  aggrid() |>
-  ag_col_render(mpg_line, cellRenderer = "agSparklineCellRenderer")
-```
-
-Note in the snippet above that specifying an `agSparklineCellRenderer` will display the data using the default `line` sparkline. 
-
-
-Sparklines are customised by supplying `sparklineOptions` to the `cellRendererParams` on the Sparkline Cell Renderer as shown below. For example：
-
-### bar plot
-
-```{r}
-head(mtcars, n = 10) |>
-  dplyr::mutate(mpg_plot = mpg / max(mpg)) |>
-  dplyr::select(cyl, mpg_plot) |>
-  aggrid() |>
-  ag_col_render(mpg_plot,
-    cellRenderer = "agSparklineCellRenderer",
-    cellRendererParams = list(
-      sparklineOptions = list(
-        type = "bar",
-        valueAxisDomain = c(0, 1)
-      )
-    )
-  )
-```
-
-## Row group
-
-```{r}
-aggrid(iris) |>
-  ag_col_def(Species, rowGroup = T)
-```
-
-## Accessories
-
-### statusBar
-
-Default has statusBar, you can set it `FALSE` use `ag_gridOptions()`:
-```{r}
-aggrid(iris) |>
-  ag_gridOptions(statusBar = FALSE)
-```
-
-### Side Bar
-
-```{r}
-aggrid(iris) |>
-  ag_gridOptions(sideBar = TRUE)
-```
-
-Custom Side bar:
-
-```{r}
-aggrid(iris) |>
-  ag_gridOptions(sideBar = list(
-    toolPanels = list(
-      list(
-        id = "columns",
-        labelDefault = "Columns",
-        labelKey = "columns",
-        iconKey = "columns",
-        toolPanel = "agColumnsToolPanel"
-      )
-    )
-  ))
-```
-
-## Charts
-
-```{r}
-aggrid(iris) |> 
-  enable_charts()
-```
+More example to see <./Examples2.html>

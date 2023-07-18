@@ -3,6 +3,8 @@
 #' This function creates a HTML widget to display matrix or a data frame using ag-grid.
 #' @param data data frame or matrix.
 #' @param rowSelection three options：`multiple`,`single`.
+#' @param suppressRowClickSelection When `TRUE`, disable row selection when clicking.
+#' @param selectedRows set default selectedRows rows.
 #' @param checkboxSelection Enable checkbox in first column?
 #' @param pagination Enable pagination allows?
 #' @param paginationPageSize default size is `10`.
@@ -25,6 +27,10 @@
 #'
 #' ## auto size columns
 #' aggrid(iris) |> auto_size_columns()
+#'
+#' ## select row
+#' head(iris, n = 10) |>
+#'   aggrid(checkboxSelection = T,selectedRows = 1:3)
 #' @export
 aggrid <- function(data,
                    rowSelection = c("multiple", "single"),
@@ -86,6 +92,14 @@ aggrid <- function(data,
   # default rowSelected
   if (!is.null(selectedRows)) {
     if (rowSelection == "single" && length(selectedRows) > 1) {
+      cli::cli_abort("`rowSelection` is single but `selectedRows` length > 1.")
+    }
+    if (server && is.numeric(selectedRows)) {
+      # server  module use toggledNodes
+      selectedRows = seq_len(n_row)[-selectedRows]
+    }
+    if (is.character(selectedRows) && selectedRows != "all") {
+      cli::cli_abort("selectedRows only support set as `all` or `numeric` class.")
     }
   }
 
