@@ -4,8 +4,9 @@ pkgdown_sha: ~
 articles:
   gprofiler: Demos/gprofiler.html
   Examples: Examples.html
+  Examples2: Examples2.html
   Intro: Intro.html
-last_built: 2023-07-11T02:20Z
+last_built: 2023-07-20T14:33Z
 urls:
   reference: https://liripo.github.io/aggrid/reference
   article: https://liripo.github.io/aggrid/articles

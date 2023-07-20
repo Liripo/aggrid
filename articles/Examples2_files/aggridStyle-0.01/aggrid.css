@@ -1,0 +1,13 @@
+.ag-watermark {
+  display: none !important;
+}
+
+.aggrid .ag-header-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.aggrid .ag-header-center .ag-header-cell-label {
+  justify-content: center;
+  text-align: center;
+}

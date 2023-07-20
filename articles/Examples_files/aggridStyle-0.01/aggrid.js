@@ -29,6 +29,15 @@ HTMLWidgets.widget({
       }
       return Id;
     };
+    function convertToArray(value) {
+      if (typeof value === 'number') {
+        return [value];
+      } else if (Array.isArray(value)) {
+        return value;
+      } else {
+        throw new Error('Input must be a number or an array');
+      }
+    }
 
     return {
 
@@ -43,7 +52,14 @@ HTMLWidgets.widget({
           if (x.server) {
             let state = event.api.getServerSideSelectionState();
             if (state.selectAll) {
-              row_index = [...Array(x.n_row)].map((v, k) => k + 1);
+              console.log(state.toggledNodes);
+              if (state.toggledNodes.length === 0) {
+                row_index = [...Array(x.n_row)].map((v, k) => k + 1);
+              } else {
+                state.toggledNodes = state.toggledNodes.map((id) => Number(id));
+                row_index = [...Array(x.n_row)].map((v, k) => k + 1);
+                row_index = row_index.filter(x => !state.toggledNodes.includes(x));
+              }
             } else {
               row_index = event.api.getSelectedNodes();
               row_index = row_index.map((item) => item.data.rowid);
@@ -68,6 +84,33 @@ HTMLWidgets.widget({
         }
         el.classList.add(x.theme || "ag-theme-balham");
         new agGrid.Grid(el, gridOptions);
+        // set selectedRows
+        if (x.selectedRows !== null) {
+          if (x.selectedRows === "all") {
+            if (x.server) {
+              gridOptions.api.setServerSideSelectionState({
+                selectAll: true,
+              });
+            } else {
+              gridOptions.api.selectAll();
+            }
+          } else {
+            x.selectedRows = convertToArray(x.selectedRows);
+            if (x.server) {
+              gridOptions.api.setServerSideSelectionState({
+                selectAll: true,
+                toggledNodes: x.selectedRows.map(x => `${x}`),
+              });
+            } else {
+              x.selectedRows.map((item) => {
+                item = item - 1;
+                const rowNode = gridOptions.api.getRowNode(item);
+                rowNode.setSelected(true);
+              })
+            }
+          }
+        }
+
         if (x.server) {
           // add Total rows
           const statbar_el = el.querySelector(".ag-status-bar-right .ag-status-name-value");
