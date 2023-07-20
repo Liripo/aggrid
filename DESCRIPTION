@@ -25,6 +25,7 @@ Suggests:
     knitr,
     rmarkdown,
     roxygen2,
+    scales,
     shinytest2
 Depends:
     R (>= 4.1.0)
