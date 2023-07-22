@@ -98,13 +98,13 @@ function exponentToSup(params) {
 # see more <https://www.ag-grid.com/javascript-data-grid/sparklines-bar-customisation/>
 bar_formatter <- function(values,palette = "viridis") {
   cols <- scales::col_numeric(palette, domain = NULL)(values)
-  names(cols) <- values
+  names(cols) <- scales::number_format(accuracy = 0.001)(values)
   cols_dict = jsonlite::toJSON(as.list(cols),auto_unbox = T)
 
   formatter_code <- htmlwidgets::JS(sprintf('function formatter(params) {
   const cols_dict = %s;
   const { yValue } = params;
-  const col = cols_dict[yValue];
+  const col = cols_dict[yValue.toFixed(3)];
   return {fill: col}
 }',cols_dict))
   formatter_code
